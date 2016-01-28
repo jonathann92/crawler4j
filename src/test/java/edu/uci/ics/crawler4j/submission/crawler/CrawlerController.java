@@ -18,23 +18,23 @@ import edu.uci.ics.crawler4j.submission.crawler.CrawlStats;;
 
 /*
  * Authors: Jonathan Nguyen 54203830
- * 			Gessica Torres
+ * 			Gessica Torres 
  * 			Leonard Bejosano
  */
 
 
 public class CrawlerController {
 	 private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
-	 
+
 	 public static void main(String[] args) throws Exception {
-		 
+
 		    if (args.length != 2) {
 		      logger.info("Needed parameters: ");
 		      logger.info("\t rootFolder (it will contain intermediate crawl data)");
 		      logger.info("\t numberOfCralwers (number of concurrent threads)");
 		      return;
 		    }
-		    
+
 		    /*
 		     * crawlStorageFolder is a folder where intermediate crawl data is
 		     * stored.
@@ -61,19 +61,19 @@ public class CrawlerController {
 		     * You can set the maximum crawl depth here. The default value is -1 for
 		     * unlimited depth
 		     */
-		    config.setMaxDepthOfCrawling(2);
+		    config.setMaxDepthOfCrawling(-1);
 
 		    /*
 		     * You can set the maximum number of pages to crawl. The default value
 		     * is -1 for unlimited number of pages
 		     */
-		    config.setMaxPagesToFetch(1000);
+		    config.setMaxPagesToFetch(-1);
 
 		    /**
 		     * Do you want crawler4j to crawl also binary data ?
 		     * example: the contents of pdf, or the metadata of images etc
 		     */
-		    config.setIncludeBinaryContentInCrawling(false);
+		    config.setIncludeBinaryContentInCrawling(true);
 
 		    /*
 		     * Do you need to set a proxy? If so, you can use:
@@ -91,7 +91,7 @@ public class CrawlerController {
 		     * want to start a fresh crawl, you need to delete the contents of
 		     * rootFolder manually.
 		     */
-		    config.setResumableCrawling(false);
+		    config.setResumableCrawling(true);
 
 		    /*
 		     * Instantiate the controller for this crawl.
@@ -113,16 +113,20 @@ public class CrawlerController {
 		     * will reach the line after this only when crawling is finished.
 		     */
 		    controller.start(OurCrawler.class, numberOfCrawlers);
-		    
+
 		    List<Object> crawlerData = controller.getCrawlersLocalData();
-		    int numDomains = 0;
+		    int numDomains = 0; 
+				int numURL = 0; // Unique URLs
 		    Map<String, Map<String,Integer>> pageInfo = new HashMap();
 		    for(Object localData: crawlerData){
 		    	CrawlStats stat = (CrawlStats) localData;
-		    	
+		    	numDomains += stat.numDomains();
+				numURL += stat.numPages();
+				pageInfo.putAll(stat.getPageInfo()); // combines all maps into map
 		    }
 		    
-		  }
+		    System.out.println("numDomains: " + numDomains);
+		    System.out.println("numURL: " + numURL);
+		    System.out.println(pageInfo.toString());
+		    }
 		}
-
-

@@ -39,12 +39,12 @@ public class OurCrawler extends WebCrawler {
 	public void visit(Page page){
 		String url = page.getWebURL().getURL();
 		String domain = page.getWebURL().getDomain();
-
-
+		localStats.insertDomain(domain);
 
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			String text = htmlParseData.getText();
+			
 
 			String[] items = text.split("[^a-zA-Z0-9'`]+");
 			List<String> tokens = Arrays.asList(items);
@@ -52,18 +52,11 @@ public class OurCrawler extends WebCrawler {
 			localStats.insertURL(url, wordFreq);
     }
 
-
 		logger.info("Visited: {}", page.getWebURL().getURL());
 	}
-	
+
 	@Override
 	public Object getMyLocalData(){
 		return localStats;
 	}
-	
-	
-	
-
-
-
 }

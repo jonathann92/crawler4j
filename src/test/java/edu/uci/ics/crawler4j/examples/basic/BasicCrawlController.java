@@ -120,6 +120,7 @@ public class BasicCrawlController {
      */
     controller.addSeed("http://www.ics.uci.edu/~jonattn2/");
 
+
     /*
      * Start the crawl. This is a blocking operation, meaning that your code
      * will reach the line after this only when crawling is finished.
