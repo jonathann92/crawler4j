@@ -35,14 +35,14 @@ public class BasicCrawlController {
   private static final Logger logger = LoggerFactory.getLogger(BasicCrawlController.class);
 
   public static void main(String[] args) throws Exception {
-	  /*
+	  
     if (args.length != 2) {
       logger.info("Needed parameters: ");
       logger.info("\t rootFolder (it will contain intermediate crawl data)");
       logger.info("\t numberOfCralwers (number of concurrent threads)");
       return;
     }
-    */
+    
 
     
     // test commit
@@ -51,7 +51,7 @@ public class BasicCrawlController {
      * crawlStorageFolder is a folder where intermediate crawl data is
      * stored.
      */
-    String crawlStorageFolder = "D:\\Users\\Jonathan\\GitHub\\crawler4j\\storage";//args[0];
+    String crawlStorageFolder = args[0];
 
     /*
      * numberOfCrawlers shows the number of concurrent threads that should

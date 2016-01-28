@@ -3,7 +3,7 @@ package edu.uci.ics.crawler4j.submission.crawler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -13,6 +13,8 @@ import edu.uci.ics.crawler4j.examples.basic.BasicCrawler;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
+import edu.uci.ics.crawler4j.submission.crawler.CrawlStats;;
+
 
 /*
  * Authors: Jonathan Nguyen 54203830
@@ -59,13 +61,13 @@ public class CrawlerController {
 		     * You can set the maximum crawl depth here. The default value is -1 for
 		     * unlimited depth
 		     */
-		    config.setMaxDepthOfCrawling(-1);
+		    config.setMaxDepthOfCrawling(2);
 
 		    /*
 		     * You can set the maximum number of pages to crawl. The default value
 		     * is -1 for unlimited number of pages
 		     */
-		    config.setMaxPagesToFetch(-1);
+		    config.setMaxPagesToFetch(1000);
 
 		    /**
 		     * Do you want crawler4j to crawl also binary data ?
@@ -89,7 +91,7 @@ public class CrawlerController {
 		     * want to start a fresh crawl, you need to delete the contents of
 		     * rootFolder manually.
 		     */
-		    config.setResumableCrawling(true);
+		    config.setResumableCrawling(false);
 
 		    /*
 		     * Instantiate the controller for this crawl.
@@ -110,7 +112,15 @@ public class CrawlerController {
 		     * Start the crawl. This is a blocking operation, meaning that your code
 		     * will reach the line after this only when crawling is finished.
 		     */
-		    controller.start(BasicCrawler.class, numberOfCrawlers);
+		    controller.start(OurCrawler.class, numberOfCrawlers);
+		    
+		    List<Object> crawlerData = controller.getCrawlersLocalData();
+		    int numDomains = 0;
+		    Map<String, Map<String,Integer>> pageInfo = new HashMap();
+		    for(Object localData: crawlerData){
+		    	CrawlStats stat = (CrawlStats) localData;
+		    	
+		    }
 		    
 		  }
 		}
