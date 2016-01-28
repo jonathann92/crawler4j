@@ -33,6 +33,10 @@ import edu.uci.ics.crawler4j.url.WebURL;
 public class BasicCrawler extends WebCrawler {
 
   private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*\\.(bmp|gif|jpg|png)$");
+  private static final Pattern FILTERS = Pattern.compile(
+	      ".*(\\.(css|js|bmp|gif|jpe?g|png|tiff?|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|pdf" +
+	      "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
+
 
   /**
    * You should implement this function to specify whether the given url
@@ -47,7 +51,7 @@ public class BasicCrawler extends WebCrawler {
     }
 
     // Only accept the url if it is in the "www.ics.uci.edu" domain and protocol is "http".
-    return href.startsWith("http://www.ics.uci.edu/");
+    return !FILTERS.matcher(href).matches() && (href.startsWith("http://www.ics.uci.edu/") || href.startsWith("https://www.ics.uci.edu/") || href.startsWith("https://ics.uci.edu/")) ;    //return href.startsWith("http://www.ics.uci.edu/");
   }
 
   /**
