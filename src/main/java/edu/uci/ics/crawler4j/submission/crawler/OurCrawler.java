@@ -44,7 +44,7 @@ public class OurCrawler extends WebCrawler {
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			String text = htmlParseData.getText();
-			
+
 
 			String[] items = text.split("[^a-zA-Z0-9'`]+");
 			List<String> tokens = Arrays.asList(items);
@@ -52,7 +52,7 @@ public class OurCrawler extends WebCrawler {
 			localStats.insertURL(url, wordFreq);
     }
 
-		logger.info("Visited: {}", page.getWebURL().getURL());
+		//logger.info("Visited: {}", page.getWebURL().getURL());
 	}
 
 	@Override
