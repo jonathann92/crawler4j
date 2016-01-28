@@ -18,13 +18,13 @@ import edu.uci.ics.crawler4j.submission.crawler.CrawlStats;;
 
 /*
  * Authors: Jonathan Nguyen 54203830
- * 			Gessica Torres 
+ * 			Gessica Torres
  * 			Leonard Bejosano
  */
 
 
 public class CrawlerController {
-	 private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
+	 //private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
 
 	 public static void main(String[] args) throws Exception {
 
@@ -115,7 +115,7 @@ public class CrawlerController {
 		    controller.start(OurCrawler.class, numberOfCrawlers);
 
 		    List<Object> crawlerData = controller.getCrawlersLocalData();
-		    int numDomains = 0; 
+		    int numDomains = 0;
 				int numURL = 0; // Unique URLs
 		    Map<String, Map<String,Integer>> pageInfo = new HashMap();
 		    for(Object localData: crawlerData){
@@ -124,7 +124,7 @@ public class CrawlerController {
 				numURL += stat.numPages();
 				pageInfo.putAll(stat.getPageInfo()); // combines all maps into map
 		    }
-		    
+
 		    System.out.println("numDomains: " + numDomains);
 		    System.out.println("numURL: " + numURL);
 		    System.out.println(pageInfo.toString());
