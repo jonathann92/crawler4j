@@ -1,5 +1,7 @@
 package edu.uci.ics.crawler4j.hw;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -51,6 +53,7 @@ public class TheCrawler extends WebCrawler {
 		}
 
 		logger.info("Visited: {}", page.getWebURL().getURL());
+		logger.info("VISITED AT: {}", new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date()));
 	}
 
 	@Override

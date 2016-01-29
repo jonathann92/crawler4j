@@ -154,8 +154,8 @@ public class TheController {
 		
 		CrawlController controller = setupController(crawlStorageFolder, longRun);
 		
-		//controller.addSeed("http://www.ics.uci.edu/");
-		controller.addSeed("http://www.ics.uci.edu/~jonattn2/resume.html");
+		controller.addSeed("http://www.ics.uci.edu/");
+		//controller.addSeed("http://www.ics.uci.edu/~jonattn2/resume.html");
 		controller.start(TheCrawler.class, numberOfCrawlers);
 			
 		processData(controller);
