@@ -47,12 +47,42 @@ public class TheCrawler extends WebCrawler {
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			String text = htmlParseData.getText();
-			
+
 			Map<String, Integer> wordFreq = Helper.wordFrequencies(text);
 			localStats.insertURL(url, wordFreq);
 		}
 
-		logger.info("Visited: {}", page.getWebURL().getURL());
+		int docid = page.getWebURL().getDocid();
+    url = page.getWebURL().getURL();
+    domain = page.getWebURL().getDomain();
+    String path = page.getWebURL().getPath();
+    String subDomain = page.getWebURL().getSubDomain();
+    String parentUrl = page.getWebURL().getParentUrl();
+    String anchor = page.getWebURL().getAnchor();
+
+    logger.info("Docid: {}", docid);
+    logger.info("URL: {}", url);
+    logger.info("Domain: '{}'", domain);
+    logger.info("Sub-domain: '{}'", subDomain);
+    logger.info("Parent page: {}", parentUrl);
+
+    if (page.getParseData() instanceof HtmlParseData) {
+      HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
+      String text = htmlParseData.getText();
+      String html = htmlParseData.getHtml();
+      Set<WebURL> links = htmlParseData.getOutgoingUrls();
+
+      logger.info("Text length: {}", text.length());
+      logger.info("Html length: {}", html.length());
+      logger.info("Number of outgoing links: {}", links.size());
+    }
+
+		logger.info("Timestamp: {}", new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date()));
+
+
+    logger.debug("=============");
+
+
 		logger.info("VISITED AT: {}", new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date()));
 	}
 
