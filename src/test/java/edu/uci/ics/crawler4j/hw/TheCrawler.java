@@ -26,7 +26,7 @@ public class TheCrawler extends WebCrawler {
       ".*(\\.(css|js|bmp|gif|jpe?g|png|tiff?|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|pdf" +
       "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 	
-	private static final Pattern HTML = Pattern.compile(".*\\.(html)$");
+	private static final Pattern HTML = Pattern.compile(".*\\.(html|php|asp|aspx|shtml|xml)$");
 
 	
 	CrawlerData localStats;
