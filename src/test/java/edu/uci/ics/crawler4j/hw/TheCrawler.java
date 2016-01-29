@@ -63,9 +63,9 @@ public class TheCrawler extends WebCrawler {
     String subDomain = page.getWebURL().getSubDomain();
     String parentUrl = page.getWebURL().getParentUrl();
     String anchor = page.getWebURL().getAnchor();
-
+    
+    logger.info("=============");
     logger.info("Docid: {}", docid);
-    logger.info("URL: {}", url);
     logger.info("Domain: '{}'", domain);
     logger.info("Sub-domain: '{}'", subDomain);
     logger.info("Parent page: {}", parentUrl);
@@ -80,11 +80,11 @@ public class TheCrawler extends WebCrawler {
       logger.info("Html length: {}", html.length());
       logger.info("Number of outgoing links: {}", links.size());
     }
+    logger.info("URL: {}", url);
+	logger.info("Timestamp: {}", new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date()));
 
-		logger.info("Timestamp: {}", new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date()));
 
-
-    logger.debug("=============");
+    logger.info("=============");
 	}
 
 	@Override
