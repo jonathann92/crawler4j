@@ -19,14 +19,12 @@ package edu.uci.ics.crawler4j.examples.basic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.List;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
-import edu.uci.ics.crawler4j.examples.localdata.CrawlStat;
 
 /**
  * @author Yasser Ganjisaffar
@@ -73,19 +71,19 @@ public class BasicCrawlController {
      * You can set the maximum crawl depth here. The default value is -1 for
      * unlimited depth
      */
-    config.setMaxDepthOfCrawling(2);
+    config.setMaxDepthOfCrawling(-1);
 
     /*
      * You can set the maximum number of pages to crawl. The default value
      * is -1 for unlimited number of pages
      */
-    config.setMaxPagesToFetch(1000);
+    config.setMaxPagesToFetch(-1);
 
     /**
      * Do you want crawler4j to crawl also binary data ?
      * example: the contents of pdf, or the metadata of images etc
      */
-    config.setIncludeBinaryContentInCrawling(false);
+    config.setIncludeBinaryContentInCrawling(true);
 
     /*
      * Do you need to set a proxy? If so, you can use:
@@ -118,7 +116,7 @@ public class BasicCrawlController {
      * URLs that are fetched and then the crawler starts following links
      * which are found in these pages
      */
-    controller.addSeed("http://www.ics.uci.edu/~jonattn2/");
+    controller.addSeed("http://www.ics.uci.edu/");
 
 
     /*
