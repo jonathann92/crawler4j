@@ -25,7 +25,10 @@ public class TheCrawler extends WebCrawler {
 	private static final Pattern FILTERS = Pattern.compile(
       ".*(\\.(css|js|bmp|gif|jpe?g|png|tiff?|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|pdf" +
       "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
+	
+	private static final Pattern HTML = Pattern.compile(".*\\.(html)$");
 
+	
 	CrawlerData localStats;
 
 	public TheCrawler(){
@@ -35,7 +38,8 @@ public class TheCrawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(Page refPage, WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !FILTERS.matcher(href).matches() && href.contains("ics.uci.edu") ;
+		return HTML.matcher(href).matches() && href.contains("ics.uci.edu") ;
+		//return !FILTERS.matcher(href).matches() && href.contains("ics.uci.edu") ;
 	}
 
 	@Override
