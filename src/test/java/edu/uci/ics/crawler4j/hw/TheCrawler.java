@@ -81,9 +81,6 @@ public class TheCrawler extends WebCrawler {
 
 
     logger.debug("=============");
-
-
-		logger.info("VISITED AT: {}", new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date()));
 	}
 
 	@Override
