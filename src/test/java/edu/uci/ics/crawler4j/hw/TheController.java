@@ -31,18 +31,41 @@ public class TheController {
 	final static String gessicaID = "#"; // TODO
 	final static String leoID = "#"; // TODO
 	public static Set<String> stopWords = new HashSet<String>(); // TODO see below @ setStopWords()
-	
+
 	public static long startTime = 0;
-	
-	public static CrawlController setupController(String storageFolder,  boolean longRun) throws Exception{
+
+	public static CrawlController setup(String storageFolder,  boolean longRun) throws Exception{
 		String userAgent = "UCI Inf141-CS121 crawler " + jonID + " " + gessicaID + " " + leoID;
 		CrawlConfig config = new CrawlConfig();
 		int maxDepth = 2;
 		int maxPages = 10;
 		
-		longRun = false;
+		String folder = storageFolder;
+		if(!folder.endsWith("/")) folder += "/";
+		folder += "CrawlerData/";
+		
+		File theDir = new File(folder);
+
+
+		if (!theDir.exists()) {
+		    System.out.println("creating directory: " + folder);
+		    boolean result = false;
+
+		    try{
+		        theDir.mkdir();
+		        result = true;
+		    }
+		    catch(SecurityException se){
+		        se.printStackTrace();		    }
+		    if(result) {
+		        System.out.println("DIR created");
+		    }
+		}
+
+
 
 		if(longRun){
+			System.out.println("Longrun == true");
 			maxDepth = -1;
 			maxPages = -1;
 		}
@@ -85,25 +108,30 @@ public class TheController {
 	}
 
 	public static void setStopWords(){
-		// TODO insert stop words into stopWords
+		// TODO insert stop words into Set<String> stopWords
+		//stopWords = ....
 	}
-	
+
 	public static List<String> getFilesInDirectory(String dir){
 		List<String> toReturn = new ArrayList<String>();
-		
+
 		File folder = new File(dir);
 
 		for(File file: folder.listFiles()){
-			toReturn.add(file.getAbsolutePath());
+			String path = file.getAbsolutePath();
+
+			if(path.endsWith(".cwl")){
+				toReturn.add(file.getAbsolutePath());
 			System.out.println(file.getAbsolutePath());
+			}
 		}
 
 		return toReturn;
 	}
-	
+
 	public static List<CrawlerData> getDataFromFiles(List<String> files){
 		List<CrawlerData> toReturn = new ArrayList<CrawlerData>();
-		
+
 		for(int i = 0; i < files.size(); ++i){
 			ObjectInputStream ois = null;
 			try{
@@ -114,25 +142,58 @@ public class TheController {
 			} catch (Exception e){
 				e.printStackTrace();
 			} finally {
-				try { 
+				try {
 					if(ois != null)
 						ois.close(); }
 				catch (IOException e2 ) { }
 			}
 		}
-		
+
 		return toReturn;
 	}
 
-	public static void processData(String dir){
-		
-		List<String> files = getFilesInDirectory(dir+"/CrawlerData/");
-		List<CrawlerData> data = getDataFromFiles(files);
-		
-		for(int i = 0; i < data.size(); ++i){
-			System.out.println(data.get(i).getURL());
+	public static List<String> getSubdomains(List<CrawlerData> pages){
+		List<String> subdomains = new ArrayList<String>();
+
+		for(int i = 0; i < pages.size(); ++i){
+			subdomains.add(pages.get(i).getSubdomain());
 		}
-		
+
+		return subdomains;
+	}
+
+	public static List<Frequency> getSubdomainFreq(List<CrawlerData> pages){
+		List<String> subdomains = getSubdomains(pages);
+		Map<String, Integer> subdomainCounter = Helper.subdomainFreq(subdomains);
+		return Helper.createFrequencies(subdomainCounter);
+	}
+
+	public static void processData(String dir){
+		//Grabs list of files from directory
+		List<String> files = getFilesInDirectory(dir+"/CrawlerData/");
+
+		// Grabs the data from each file
+		// Each index contains one URL's information:
+		// (String url, String subdomain, Map<String, Integer> wordFrequencies)
+		List<CrawlerData> pages = getDataFromFiles(files);
+
+		List<Frequency> subdomainFreq = getSubdomainFreq(pages);
+
+		for(int i = 0; i < subdomainFreq.size(); ++i){
+			Frequency subdomain = subdomainFreq.get(i);
+			System.out.println(subdomain.getText() + ": " + subdomain.getFrequency());
+		}
+
+		/*
+		for(int i = 0; i < pages.size(); ++i){
+			System.out.println(pages.get(i).getURL());
+		}
+		*/
+
+
+
+		System.out.println(pages.size());
+
 		//System.out.println("wordFreq: " + data.get(0).getWordFreq().toString());
 		//System.out.println("Num pages: " + allPages.size());
 
@@ -141,7 +202,7 @@ public class TheController {
 		 * SORT subdomainFreq
 		 * SORT wordFreq
 		 *
-		 * DO #2 use allPages.size()
+		 * DO #2 use Pages.size() to get number of URLs
 		 * DO #3 use subdomainFreq and write what teacher lady wanted
 		 * DO #4 (use allPages to see who has the biggest map)
 		 * DO #5 after sorting wordFreq write first 500 words to file
@@ -168,11 +229,11 @@ public class TheController {
 
 		// setStopWords(); TODO
 
-		CrawlController controller = setupController(crawlStorageFolder, longRun);
+		CrawlController controller = setup(crawlStorageFolder, longRun);
 
-		//controller.addSeed("http://www.ics.uci.edu/");
-		controller.addSeed("http://www.ics.uci.edu/~jonattn2/");
-		
+		controller.addSeed("http://sli.ics.uci.edu/");
+		controller.addSeed("http://www.ics.uci.edu/");
+
 		startTime = System.currentTimeMillis();
 		controller.start(TheCrawler.class, numberOfCrawlers);
 

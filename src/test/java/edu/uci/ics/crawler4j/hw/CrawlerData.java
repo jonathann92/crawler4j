@@ -5,13 +5,6 @@ import java.util.*;
 import java.io.Serializable;
 
 public class CrawlerData implements Serializable {
-	/*
-	This is a map of URL's as a key and
-	word frequencies as a value
-
-	word frequencies is a map of words and their counts
-	in each document
-	*/
 	String subdomain = null;
 	String url = null;
 	Map<String, Integer> wordFreq = new HashMap<String, Integer>();

@@ -27,11 +27,16 @@ public class TheCrawler extends WebCrawler {
 	File file = null;
 
 
+
+
+
 	private static final Pattern FILTERS = Pattern.compile(
       ".*(\\.(css|js|bmp|gif|jpe?g|png|tiff?|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|pdf" +
       "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
 	private static final Pattern HTML = Pattern.compile(".*\\.(html|php|asp|aspx|shtml|xml)$");
+	
+
 
 
 	@Override
@@ -43,70 +48,19 @@ public class TheCrawler extends WebCrawler {
 
 	@Override
 	public void visit(Page page){
-		String url = page.getWebURL().getURL();
-		String subdomain = page.getWebURL().getSubDomain();
-		Map<String, Integer> wordFreq = null;
-
-		if (page.getParseData() instanceof HtmlParseData) {
-			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-			String text = htmlParseData.getText();
-
-			wordFreq = Helper.wordFrequencies(text);
-		}
-		CrawlerData data = new CrawlerData(url,subdomain, wordFreq);
-		
 		String dir = this.getMyController().getConfig().getCrawlStorageFolder();
+		if(!dir.endsWith("/")) dir += "/";
 
-		String pathToFile = dir + "CrawlerData/crawler-" + this.getMyId() + ".txt"; 
-		try{
-	    	if(fout == null){
-	    		fout = new FileOutputStream(pathToFile,true);
-	    	}
-	    
-	    	if(oos == null){
-	    		oos = new ObjectOutputStream(fout);
-	    	}
-	    	
-	    	oos.writeObject(data);
-	    	oos.flush();
-
-	    } catch (IOException e) {
-	    	e.printStackTrace();
-	    } finally {}
-	    
-	// Log all the information
-	int docid = page.getWebURL().getDocid();
-    String domain = page.getWebURL().getDomain();
-    String parentUrl = page.getWebURL().getParentUrl();
-
-    logger.info("=============");
-    logger.info("Docid: {}", docid);
-    logger.info("Domain: '{}'", domain);
-    logger.info("Sub-domain: '{}'", subdomain);
-    logger.info("Parent page: {}", parentUrl);
-
-    if (page.getParseData() instanceof HtmlParseData) {
-      HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-      String text = htmlParseData.getText();
-      String html = htmlParseData.getHtml();
-      Set<WebURL> links = htmlParseData.getOutgoingUrls();
-
-      logger.info("Text length: {}", text.length());
-      logger.info("Html length: {}", html.length());
-      logger.info("Number of outgoing links: {}", links.size());
-    }
-    logger.info("URL: {}", url);
-    logger.info("Time since start {}", System.currentTimeMillis() - TheController.startTime);
-	logger.info("Timestamp: {}", new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date()));
-
-
-    logger.info("=============");
+		oos = Helper.writeDataToFile(page, oos, this.getMyId(), dir);
+		Helper.logInfo(page, this.logger);
+		
 	}
 
 	@Override
   public void onBeforeExit() {
     if(oos != null){
     	try {
+    		oos.writeObject(null);
     		oos.close();
     	} catch (IOException e) {
     		e.printStackTrace();

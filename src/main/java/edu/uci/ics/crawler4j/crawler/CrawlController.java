@@ -236,7 +236,7 @@ public class CrawlController extends Configurable {
             synchronized (waitingLock) {
 
               while (true) {
-                sleep(10);
+                sleep(2);
                 boolean someoneIsWorking = false;
                 for (int i = 0; i < threads.size(); i++) {
                   Thread thread = threads.get(i);
