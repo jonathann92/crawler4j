@@ -38,8 +38,8 @@ public class TheCrawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(Page refPage, WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return HTML.matcher(href).matches() && href.contains("ics.uci.edu") ;
-		//return !FILTERS.matcher(href).matches() && href.contains("ics.uci.edu") ;
+		//return HTML.matcher(href).matches() && href.contains("ics.uci.edu") ;
+		return !FILTERS.matcher(href).matches() && href.contains("ics.uci.edu") ;
 	}
 
 	@Override
@@ -81,6 +81,7 @@ public class TheCrawler extends WebCrawler {
       logger.info("Number of outgoing links: {}", links.size());
     }
     logger.info("URL: {}", url);
+    logger.info("Time since start {}", System.currentTimeMillis() - TheController.startTime);
 	logger.info("Timestamp: {}", new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date()));
 
 

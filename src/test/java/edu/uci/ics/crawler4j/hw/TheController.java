@@ -25,7 +25,9 @@ public class TheController {
 	final static String gessicaID = "#"; // TODO
 	final static String leoID = "#"; // TODO
 	public static Set<String> stopWords = new HashSet<String>(); // TODO see below @ setStopWords()
-
+	
+	public static long startTime = 0;
+	
 	public static CrawlController setupController(String storageFolder,  boolean longRun) throws Exception{
 		String userAgent = "UCI Inf141-CS121 crawler " + jonID + " " + gessicaID + " " + leoID;
 		CrawlConfig config = new CrawlConfig();
@@ -36,7 +38,6 @@ public class TheController {
 			maxDepth = -1;
 			maxPages = -1;
 		}
-
 		config.setCrawlStorageFolder(storageFolder);
 		config.setPolitenessDelay(601);
 		config.setMaxDepthOfCrawling(maxDepth);
@@ -156,6 +157,8 @@ public class TheController {
 
 		controller.addSeed("http://www.ics.uci.edu/");
 		//controller.addSeed("http://www.ics.uci.edu/~jonattn2/resume.html");
+		
+		startTime = System.currentTimeMillis();
 		controller.start(TheCrawler.class, numberOfCrawlers);
 
 		processData(controller);
