@@ -19,6 +19,7 @@ package edu.uci.ics.crawler4j.examples.basic;
 
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.io.*;
 
 import org.apache.http.Header;
 
@@ -53,6 +54,10 @@ public class BasicCrawler extends WebCrawler {
     // Only accept the url if it is in the "www.ics.uci.edu" domain and protocol is "http".
     return !FILTERS.matcher(href).matches() && (href.startsWith("http://www.ics.uci.edu/") || href.startsWith("https://www.ics.uci.edu/") || href.startsWith("https://ics.uci.edu/")) ;    //return href.startsWith("http://www.ics.uci.edu/");
   }
+  
+  int crawlerID = this.myId;
+  BufferedWriter bw = null;
+  File file = null;
 
   /**
    * This function is called when a page is fetched and ready to be processed
@@ -67,7 +72,7 @@ public class BasicCrawler extends WebCrawler {
     String subDomain = page.getWebURL().getSubDomain();
     String parentUrl = page.getWebURL().getParentUrl();
     String anchor = page.getWebURL().getAnchor();
-
+    
     logger.debug("Docid: {}", docid);
     logger.info("URL: {}", url);
     logger.debug("Domain: '{}'", domain);
@@ -95,6 +100,44 @@ public class BasicCrawler extends WebCrawler {
       }
     }
 
+   
+    
+    String dir = this.getMyController().getConfig().getCrawlStorageFolder();
+    
+    String pathToFile = dir + "CrawlerData/crawler-" + this.getMyId() + ".txt";
+    
+    try{
+    	if(file == null){
+    		File file = new File(pathToFile);
+    		if(!file.exists()) 
+    			file.createNewFile();
+    	}
+    	
+    	if(bw == null)
+    		bw = new BufferedWriter(new FileWriter(pathToFile, true));
+    	
+    	bw.write(subDomain);
+    	bw.newLine();
+    	bw.flush();
+    } catch (IOException e) {
+    	e.printStackTrace();
+    } 
+    
+    
     logger.debug("=============");
   }
+  
+  @Override
+  public void onBeforeExit() {
+    if(bw != null){
+    	try {
+    		//bw.flush();
+    		bw.close();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+    }
+  }
+  
+  
 }

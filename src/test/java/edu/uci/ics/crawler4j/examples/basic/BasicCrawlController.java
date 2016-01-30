@@ -55,7 +55,7 @@ public class BasicCrawlController {
      * numberOfCrawlers shows the number of concurrent threads that should
      * be initiated for crawling.
      */
-    int numberOfCrawlers = 8;//Integer.parseInt(args[1]);
+    int numberOfCrawlers = Integer.parseInt(args[1]);
 
     CrawlConfig config = new CrawlConfig();
 
@@ -83,7 +83,7 @@ public class BasicCrawlController {
      * Do you want crawler4j to crawl also binary data ?
      * example: the contents of pdf, or the metadata of images etc
      */
-    config.setIncludeBinaryContentInCrawling(true);
+    config.setIncludeBinaryContentInCrawling(false);
 
     /*
      * Do you need to set a proxy? If so, you can use:
@@ -101,7 +101,7 @@ public class BasicCrawlController {
      * want to start a fresh crawl, you need to delete the contents of
      * rootFolder manually.
      */
-    config.setResumableCrawling(false);
+    config.setResumableCrawling(true);
 
     /*
      * Instantiate the controller for this crawl.
@@ -116,7 +116,8 @@ public class BasicCrawlController {
      * URLs that are fetched and then the crawler starts following links
      * which are found in these pages
      */
-    controller.addSeed("http://www.ics.uci.edu/");
+    //controller.addSeed("http://www.ics.uci.edu/");
+    controller.addSeed("http://sli.ics.uci.edu/");
 
 
     /*

@@ -1,6 +1,12 @@
 package edu.uci.ics.crawler4j.hw;
 
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Set;
@@ -33,6 +39,8 @@ public class TheController {
 		CrawlConfig config = new CrawlConfig();
 		int maxDepth = 2;
 		int maxPages = 10;
+		
+		longRun = false;
 
 		if(longRun){
 			maxDepth = -1;
@@ -52,21 +60,6 @@ public class TheController {
 	    CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
 
 		return controller;
-	}
-
-	public static void incrementSubdomainCount(Map<String, Integer> subdomainCounter, Map<String, Integer> crawlerSubdomainData){
-		for (Map.Entry<String,Integer> entry : crawlerSubdomainData.entrySet()) {
-			// This will gather the counts for each subdomain from each crawler
-		    String sDomain = entry.getKey();
-		    Integer count = entry.getValue();
-
-		    Integer currentCount = subdomainCounter.get(sDomain);
-		    if(currentCount == null){
-		    	subdomainCounter.put(sDomain, count);
-		    } else {
-		    	subdomainCounter.put(sDomain, currentCount + count);
-		    }
-		}
 	}
 
 	public static List<Frequency> getTotalWordFreq(Map<String, Map<String,Integer>> allPages){
@@ -94,32 +87,54 @@ public class TheController {
 	public static void setStopWords(){
 		// TODO insert stop words into stopWords
 	}
+	
+	public static List<String> getFilesInDirectory(String dir){
+		List<String> toReturn = new ArrayList<String>();
+		
+		File folder = new File(dir);
 
-	public static void processData(CrawlController controller){
-		// Each index contains the data that the crawlers have stored
-		// I.E it contains the data and methods in the CrawlerData class
-		List<Object> crawlerData = controller.getCrawlersLocalData();
-
-		// This is a map where
-		// URLs are KEY
-		// map of word frequencies are VALUE
-		Map<String, Map<String,Integer>> allPages = new HashMap<String, Map<String,Integer>>();
-
-		Map<String, Integer> subdomainCounter = new HashMap<String, Integer>();
-
-		for(Object localData: crawlerData){
-			CrawlerData data = (CrawlerData) localData;
-			Map<String, Integer> crawlerSubdomainData = data.getDomainCounter();
-			incrementSubdomainCount(subdomainCounter, crawlerSubdomainData);
-			allPages.putAll(data.getPageInfo());
+		for(File file: folder.listFiles()){
+			toReturn.add(file.getAbsolutePath());
+			System.out.println(file.getAbsolutePath());
 		}
 
-		List<Frequency> subdomainFreq = Helper.createFrequencies(subdomainCounter);
-		List<Frequency> wordFreq = getTotalWordFreq(allPages);
+		return toReturn;
+	}
+	
+	public static List<CrawlerData> getDataFromFiles(List<String> files){
+		List<CrawlerData> toReturn = new ArrayList<CrawlerData>();
+		
+		for(int i = 0; i < files.size(); ++i){
+			ObjectInputStream ois = null;
+			try{
+				ois = new ObjectInputStream(new FileInputStream(files.get(i)));
+				CrawlerData data = null;
+				while((data = (CrawlerData) ois.readObject()) != null)
+					toReturn.add(data);
+			} catch (Exception e){
+				e.printStackTrace();
+			} finally {
+				try { 
+					if(ois != null)
+						ois.close(); }
+				catch (IOException e2 ) { }
+			}
+		}
+		
+		return toReturn;
+	}
 
-		System.out.println("subdomainFreq size: " + subdomainFreq.size());
-		System.out.println("wordFreq.size: " + wordFreq.toString());
-		System.out.println("Num pages: " + allPages.size());
+	public static void processData(String dir){
+		
+		List<String> files = getFilesInDirectory(dir+"/CrawlerData/");
+		List<CrawlerData> data = getDataFromFiles(files);
+		
+		for(int i = 0; i < data.size(); ++i){
+			System.out.println(data.get(i).getURL());
+		}
+		
+		//System.out.println("wordFreq: " + data.get(0).getWordFreq().toString());
+		//System.out.println("Num pages: " + allPages.size());
 
 		/*
 		 * TODO
@@ -155,13 +170,13 @@ public class TheController {
 
 		CrawlController controller = setupController(crawlStorageFolder, longRun);
 
-		controller.addSeed("http://www.ics.uci.edu/");
-		//controller.addSeed("http://www.ics.uci.edu/~jonattn2/resume.html");
+		//controller.addSeed("http://www.ics.uci.edu/");
+		controller.addSeed("http://www.ics.uci.edu/~jonattn2/");
 		
 		startTime = System.currentTimeMillis();
 		controller.start(TheCrawler.class, numberOfCrawlers);
 
-		processData(controller);
+		processData(crawlStorageFolder);
 	}
 
 

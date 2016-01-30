@@ -4,6 +4,7 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.io.*;
 
 import org.apache.http.Header;
 
@@ -21,19 +22,17 @@ import edu.uci.ics.crawler4j.hw.Helper;
  */
 
 public class TheCrawler extends WebCrawler {
+	FileOutputStream fout = null;
+	ObjectOutputStream oos = null;
+	File file = null;
+
 
 	private static final Pattern FILTERS = Pattern.compile(
       ".*(\\.(css|js|bmp|gif|jpe?g|png|tiff?|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|pdf" +
       "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
-	
+
 	private static final Pattern HTML = Pattern.compile(".*\\.(html|php|asp|aspx|shtml|xml)$");
 
-	
-	CrawlerData localStats;
-
-	public TheCrawler(){
-		localStats = new CrawlerData();
-	}
 
 	@Override
 	public boolean shouldVisit(Page refPage, WebURL url) {
@@ -45,29 +44,45 @@ public class TheCrawler extends WebCrawler {
 	@Override
 	public void visit(Page page){
 		String url = page.getWebURL().getURL();
-		String domain = page.getWebURL().getDomain();
-		localStats.incrementDomainCounter(domain);
+		String subdomain = page.getWebURL().getSubDomain();
+		Map<String, Integer> wordFreq = null;
 
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			String text = htmlParseData.getText();
 
-			Map<String, Integer> wordFreq = Helper.wordFrequencies(text);
-			localStats.insertURL(url, wordFreq);
+			wordFreq = Helper.wordFrequencies(text);
 		}
+		CrawlerData data = new CrawlerData(url,subdomain, wordFreq);
+		
+		String dir = this.getMyController().getConfig().getCrawlStorageFolder();
 
-		int docid = page.getWebURL().getDocid();
-    url = page.getWebURL().getURL();
-    domain = page.getWebURL().getDomain();
-    String path = page.getWebURL().getPath();
-    String subDomain = page.getWebURL().getSubDomain();
+		String pathToFile = dir + "CrawlerData/crawler-" + this.getMyId() + ".txt"; 
+		try{
+	    	if(fout == null){
+	    		fout = new FileOutputStream(pathToFile,true);
+	    	}
+	    
+	    	if(oos == null){
+	    		oos = new ObjectOutputStream(fout);
+	    	}
+	    	
+	    	oos.writeObject(data);
+	    	oos.flush();
+
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    } finally {}
+	    
+	// Log all the information
+	int docid = page.getWebURL().getDocid();
+    String domain = page.getWebURL().getDomain();
     String parentUrl = page.getWebURL().getParentUrl();
-    String anchor = page.getWebURL().getAnchor();
-    
+
     logger.info("=============");
     logger.info("Docid: {}", docid);
     logger.info("Domain: '{}'", domain);
-    logger.info("Sub-domain: '{}'", subDomain);
+    logger.info("Sub-domain: '{}'", subdomain);
     logger.info("Parent page: {}", parentUrl);
 
     if (page.getParseData() instanceof HtmlParseData) {
@@ -89,7 +104,14 @@ public class TheCrawler extends WebCrawler {
 	}
 
 	@Override
-	public Object getMyLocalData(){
-		return localStats;
-	}
+  public void onBeforeExit() {
+    if(oos != null){
+    	try {
+    		oos.close();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+    }
+  }
+
 }
