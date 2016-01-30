@@ -139,7 +139,7 @@ public class Helper {
         logger.info("\t{}: {}", header.getName(), header.getValue());
       }
     }
-    logger.info("Time since this start (seconds): {}", (System.currentTimeMillis() - TheController.startTime)*1000);
+    logger.info("Time since this start (seconds): {}", (System.currentTimeMillis() - TheController.startTime)/1000.0);
 
 		logger.info("=================");
 	}
