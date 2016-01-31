@@ -68,7 +68,7 @@ public class ControllerWithShutdown {
     PageFetcher pageFetcher = new PageFetcher(config);
     RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
     RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-    CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
+    final CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
 
     /*
      * For each crawl, you need to add some seed urls. These are the first
@@ -84,6 +84,16 @@ public class ControllerWithShutdown {
      * will reach the line after this only when crawling is finished.
      */
     controller.startNonBlocking(BasicCrawler.class, numberOfCrawlers);
+    
+    Runtime.getRuntime().addShutdownHook(new Thread()
+    {
+        @Override
+        public void run()
+        {
+            controller.shutdown();
+            controller.waitUntilFinish();
+        }
+    });
 
     // Wait for 30 seconds
     Thread.sleep(30 * 1000);

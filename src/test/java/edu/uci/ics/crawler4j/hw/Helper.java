@@ -1,5 +1,11 @@
 package edu.uci.ics.crawler4j.hw;
 
+/*
+ * Authors: Jonathan Nguyen 54203830
+ * 			Gessica Torres TODO
+ * 			Leonard Bejosano TODO
+ */
+
 import java.util.*;
 import java.io.*;
 
@@ -22,9 +28,6 @@ public class Helper {
     List<String> words = Arrays.asList(items);
 
     for(int i = 0; i < words.size(); ++i){
-    	// TODO: uncomment after stop words has been implemented
-    	//if(TheController.stopWords.contains(words.get(i)))
-    	//	continue;
 
 		Integer count = freq.get(words.get(i));
 		if(count == null)

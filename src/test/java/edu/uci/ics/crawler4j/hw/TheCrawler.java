@@ -17,8 +17,8 @@ import edu.uci.ics.crawler4j.hw.Helper;
 
 /*
  * Authors: Jonathan Nguyen 54203830
- * 			Gessica Torres
- * 			Leonard Bejosano
+ * 			Gessica Torres TODO
+ * 			Leonard Bejosano TODO
  */
 
 public class TheCrawler extends WebCrawler {
@@ -42,8 +42,9 @@ public class TheCrawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(Page refPage, WebURL url) {
 		String href = url.getURL().toLowerCase();
+		String sub = url.getSubDomain().toLowerCase();
 		//return HTML.matcher(href).matches() && href.contains("ics.uci.edu") ;
-		return !FILTERS.matcher(href).matches() && href.contains("ics.uci.edu") ;
+		return !FILTERS.matcher(href).matches() && sub.contains("ics") ;
 	}
 
 	@Override

@@ -17,6 +17,7 @@
 
 package edu.uci.ics.crawler4j.examples.basic;
 
+
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.io.*;
@@ -27,6 +28,7 @@ import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
+import edu.uci.ics.crawler4j.examples.basic.BasicCrawlController;
 
 /**
  * @author Yasser Ganjisaffar
@@ -46,19 +48,16 @@ public class BasicCrawler extends WebCrawler {
   @Override
   public boolean shouldVisit(Page referringPage, WebURL url) {
     String href = url.getURL().toLowerCase();
+    String subdomain = url.getSubDomain();
     // Ignore the url if it has an extension that matches our defined set of image extensions.
     if (IMAGE_EXTENSIONS.matcher(href).matches()) {
       return false;
     }
 
     // Only accept the url if it is in the "www.ics.uci.edu" domain and protocol is "http".
-    return !FILTERS.matcher(href).matches() && (href.startsWith("http://www.ics.uci.edu/") || href.startsWith("https://www.ics.uci.edu/") || href.startsWith("https://ics.uci.edu/")) ;    //return href.startsWith("http://www.ics.uci.edu/");
+    return !FILTERS.matcher(href).matches() && subdomain.contains("ics");
   }
-  
-  int crawlerID = this.myId;
-  BufferedWriter bw = null;
-  File file = null;
-
+ 
   /**
    * This function is called when a page is fetched and ready to be processed
    * by your program.
@@ -99,44 +98,8 @@ public class BasicCrawler extends WebCrawler {
         logger.debug("\t{}: {}", header.getName(), header.getValue());
       }
     }
-
-   
-    
-    String dir = this.getMyController().getConfig().getCrawlStorageFolder();
-    
-    String pathToFile = dir + "CrawlerData/crawler-" + this.getMyId() + ".txt";
-    
-    try{
-    	if(file == null){
-    		File file = new File(pathToFile);
-    		if(!file.exists()) 
-    			file.createNewFile();
-    	}
-    	
-    	if(bw == null)
-    		bw = new BufferedWriter(new FileWriter(pathToFile, true));
-    	
-    	bw.write(subDomain);
-    	bw.newLine();
-    	bw.flush();
-    } catch (IOException e) {
-    	e.printStackTrace();
-    } 
-    
-    
+    logger.debug("Running time : {}", System.currentTimeMillis() - BasicCrawlController.start);
     logger.debug("=============");
-  }
-  
-  @Override
-  public void onBeforeExit() {
-    if(bw != null){
-    	try {
-    		//bw.flush();
-    		bw.close();
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	}
-    }
   }
   
   

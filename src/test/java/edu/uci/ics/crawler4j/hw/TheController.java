@@ -1,5 +1,11 @@
 package edu.uci.ics.crawler4j.hw;
 
+/*
+ * Authors: Jonathan Nguyen 54203830
+ * 			Gessica Torres TODO
+ * 			Leonard Bejosano TODO
+ */
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,7 +36,6 @@ public class TheController {
 	final static String jonID = "54203830";
 	final static String gessicaID = "#"; // TODO
 	final static String leoID = "#"; // TODO
-	public static Set<String> stopWords = new HashSet<String>(); // TODO see below @ setStopWords()
 
 	public static long startTime = 0;
 
@@ -85,31 +90,50 @@ public class TheController {
 		return controller;
 	}
 
-	public static List<Frequency> getTotalWordFreq(Map<String, Map<String,Integer>> allPages){
+	public static List<Frequency> getTotalWordFreq(List<CrawlerData> pages, Set<String> stopWords){
 		// This functions adds up all the counters for each every word.
 		// wordFreq is a Map of words as the KEY
 		// and Count as the VALUE
 		Map<String, Integer> wordFreq = new HashMap<String, Integer>();
-
-		for(Map<String, Integer> pageWordCount : allPages.values()){
-			for (Map.Entry<String,Integer> wordCounter : pageWordCount.entrySet()) {
-		        String word = wordCounter.getKey();
-		        Integer count = wordCounter.getValue();
-
-		        Integer currentCount = wordFreq.get(word);
-		        if(currentCount == null)
-		        	wordFreq.put(word, count);
-		        else
-		        	wordFreq.put(word, currentCount + count);
-		    }
+		
+		for(CrawlerData page: pages){
+			Map<String, Integer> pageWordCount = page.getWordFreq();
+			
+			for(Map.Entry<String, Integer> wordCounter : pageWordCount.entrySet()){
+				String word = wordCounter.getKey();
+				if(stopWords.contains(word)) continue;
+				
+				Integer count = wordCounter.getValue();
+				
+				Integer currentCount = wordFreq.get(word);
+				if(currentCount == null)
+					wordFreq.put(word,count);
+				else
+					wordFreq.put(word, currentCount + count);
+			}
 		}
-
+		
 		return Helper.createFrequencies(wordFreq);
 	}
 
-	public static void setStopWords(){
-		// TODO insert stop words into Set<String> stopWords
-		//stopWords = ....
+	public static Set<String> stopWords(){
+		String words = "a about above after again against all am an "
+				+ "and any are aren't as at be because been before being "
+				+ "below between both but by can't cannot could couldn't did didn't "
+				+ "do does doesn't doing don't down during each few for from further "
+				+ "had hadn't has hasn't have haven't having he he'd he'll he's her here "
+				+ "here's hers herself him himself his how how's i i'd i'll i'm i've if "
+				+ "in into is isn't it it's its itself let's me more most mustn't my myself "
+				+ "no nor not of off on once only or other ought our ours ourselves out "
+				+ "over own same shan't she she'd she'll she's should shouldn't so some such "
+				+ "than that that's the their theirs them themselves then there there's these "
+				+ "they they'd they'll they're they've this those through to too under until up "
+				+ "very was wasn't we we'd we'll we're we've were weren't what what's when when's "
+				+ "where where's which while who who's whom why why's with won't would wouldn't you "
+				+ "you'd you'll you're you've your yours yourself yourselves";
+		
+		
+		return new HashSet<String>(Arrays.asList(words.split("\\s+")));
 	}
 
 	public static List<String> getFilesInDirectory(String dir){
@@ -163,51 +187,90 @@ public class TheController {
 	}
 
 	public static List<Frequency> getSubdomainFreq(List<CrawlerData> pages){
+		if(pages == null) return null;
 		List<String> subdomains = getSubdomains(pages);
 		Map<String, Integer> subdomainCounter = Helper.subdomainFreq(subdomains);
 		return Helper.createFrequencies(subdomainCounter);
 	}
+	
+	public static Map<String, Integer> getUrlSize(List<CrawlerData> pages){
+		if(pages == null) return null;
+		Map<String, Integer> toReturn = new HashMap<String, Integer>();
+		
+		for(CrawlerData page : pages){
+			Integer text = 0;
+			
+			for(Integer count: page.getWordFreq().values())
+				text += count;
+			
+			toReturn.put(page.getURL(), text);
+		}
+		
+		return toReturn;
+	}
+	
+	public static String findLongestPage(Map<String, Integer> urlSize){
+		String longestPage = null;
+		long num = 0;
+		for(Map.Entry<String, Integer> wordCounter : urlSize.entrySet()){
+			String url = wordCounter.getKey();
+			Integer count = wordCounter.getValue();
+			if(count > num){
+				longestPage = url;
+				num = count;
+			}
+		}
+		
+		return longestPage;
+	}
 
 	public static void processData(String dir){
-		//Grabs list of files from directory
 		List<String> files = getFilesInDirectory(dir+"/CrawlerData/");
 
 		// Grabs the data from each file
-		// Each index contains one URL's information:
+		// Each index of this list contains one URL's information:
 		// (String url, String subdomain, Map<String, Integer> wordFrequencies)
-		List<CrawlerData> pages = getDataFromFiles(files);
+		List<CrawlerData> pages = getDataFromFiles(files); // Use for #2
+		System.out.println("HERE");
 
-		List<Frequency> subdomainFreq = getSubdomainFreq(pages);
+		List<Frequency> subdomainFreq = getSubdomainFreq(pages); // Use for #3 TODO sort list
+		
+		//Map<String, Integer> urlSize = getUrlSize(pages); // Use for #4
+		//String longestPage = findLongestPage(urlSize); // Use for #4
+		// These 3 lines are equivalent
+		String longestPage = findLongestPage(getUrlSize(pages)); // Use for #4
+		
+		List<Frequency> totalWordFreq = getTotalWordFreq(pages, stopWords()); // Use for #5 TODO SORT list
+		
+		// Answer for #2
+		System.out.println("Total num pages: " + pages.size()); 
 
+		// Answer for #3 TODO Sort the List and write to file
 		for(int i = 0; i < subdomainFreq.size(); ++i){
 			Frequency subdomain = subdomainFreq.get(i);
-			System.out.println(subdomain.getText() + ": " + subdomain.getFrequency());
+			System.out.println(subdomain.getText() + ", " + subdomain.getFrequency());
 		}
+		
+		// Answer for #4
+		System.out.println("longest page is: " + longestPage); 
 
+
+
+		/*
+		 * TODO
+		 * SORT subdomainFreq
+		 * SORT totalWordFreq
+		 *
+		 * DO #3  
+		 * DO #5 
+		 */
+
+		
 		/*
 		for(int i = 0; i < pages.size(); ++i){
 			System.out.println(pages.get(i).getURL());
 		}
 		*/
-
-
-
-		System.out.println(pages.size());
-
-		//System.out.println("wordFreq: " + data.get(0).getWordFreq().toString());
-		//System.out.println("Num pages: " + allPages.size());
-
-		/*
-		 * TODO
-		 * SORT subdomainFreq
-		 * SORT wordFreq
-		 *
-		 * DO #2 use Pages.size() to get number of URLs
-		 * DO #3 use subdomainFreq and write what teacher lady wanted
-		 * DO #4 (use allPages to see who has the biggest map)
-		 * DO #5 after sorting wordFreq write first 500 words to file
-		 */
-
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -227,17 +290,27 @@ public class TheController {
 		String crawlStorageFolder = args[0];
 		int numberOfCrawlers = Integer.parseInt(args[1]);
 
-		// setStopWords(); TODO
+		
+		final CrawlController controller = setup(crawlStorageFolder, longRun);
 
-		CrawlController controller = setup(crawlStorageFolder, longRun);
-
-		controller.addSeed("http://sli.ics.uci.edu/");
 		controller.addSeed("http://www.ics.uci.edu/");
+		//controller.addSeed("http://sli.ics.uci.edu/");
+
 
 		startTime = System.currentTimeMillis();
-		controller.start(TheCrawler.class, numberOfCrawlers);
-
-		processData(crawlStorageFolder);
+		controller.startNonBlocking(TheCrawler.class, numberOfCrawlers);
+		
+	    Runtime.getRuntime().addShutdownHook(new Thread()
+	    {
+	        @Override
+	        public void run()
+	        {
+	            controller.shutdown();
+	            controller.waitUntilFinish();
+	        }
+	    });
+	    
+		//processData(crawlStorageFolder);
 	}
 
 

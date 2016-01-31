@@ -1,5 +1,11 @@
 package edu.uci.ics.crawler4j.hw;
 
+/*
+ * Authors: Jonathan Nguyen 54203830
+ * 			Gessica Torres TODO
+ * 			Leonard Bejosano TODO
+ */
+
 import java.util.*;
 
 import java.io.Serializable;

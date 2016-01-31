@@ -31,6 +31,8 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
  */
 public class BasicCrawlController {
   private static final Logger logger = LoggerFactory.getLogger(BasicCrawlController.class);
+  
+  public static long start = 0;
 
   public static void main(String[] args) throws Exception {
 	  
@@ -118,12 +120,14 @@ public class BasicCrawlController {
      */
     //controller.addSeed("http://www.ics.uci.edu/");
     controller.addSeed("http://sli.ics.uci.edu/");
+    controller.addSeed("http://ics.uci.edu/");
 
 
     /*
      * Start the crawl. This is a blocking operation, meaning that your code
      * will reach the line after this only when crawling is finished.
      */
+    start = System.currentTimeMillis();
     controller.start(BasicCrawler.class, numberOfCrawlers);  		
   }
 }
