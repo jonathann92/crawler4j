@@ -32,7 +32,7 @@ public class TheCrawler extends WebCrawler {
 
 	private static final Pattern FILTERS = Pattern.compile(
       ".*(\\.(css|js|bmp|gif|jpe?g|png|tiff?|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|pdf" +
-      "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
+      "|rm|smil|wmv|swf|wma|zip|rar|gz|pdf|ppt|ps|pptx))$");
 
 	private static final Pattern HTML = Pattern.compile(".*\\.(html|php|asp|aspx|shtml|xml)$");
 	
