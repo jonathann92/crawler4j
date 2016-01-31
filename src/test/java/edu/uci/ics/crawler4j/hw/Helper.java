@@ -83,7 +83,7 @@ public class Helper {
 		if(!dir.endsWith("/")) dir += "/";
 
 
-		String pathToFile = dir + "CrawlerData/crawler-" + id;
+		String pathToFile = dir + "CrawlerData/crawler-" + (char) (id+64);
 
 
 
@@ -93,7 +93,7 @@ public class Helper {
 					while(fileExists){
 						File file = new File (pathToFile+".cwl");
 						if(file.exists()){
-							pathToFile += id;
+							pathToFile += (char)(id+64);
 						} else fileExists = false;
 					}
 

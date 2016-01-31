@@ -44,6 +44,7 @@ public class TheController {
 		CrawlConfig config = new CrawlConfig();
 		int maxDepth = 2;
 		int maxPages = 10;
+		int megabyte = 1048576;
 		
 		String folder = storageFolder;
 		if(!folder.endsWith("/")) folder += "/";
@@ -67,7 +68,7 @@ public class TheController {
 		    }
 		}
 
-
+		
 
 		if(longRun){
 			System.out.println("Longrun == true");
@@ -80,7 +81,8 @@ public class TheController {
 		config.setMaxPagesToFetch(maxPages);
 		config.setIncludeBinaryContentInCrawling(false);
 		config.setResumableCrawling(longRun);
-		config.setUserAgentString(userAgent);
+		config.setUserAgentString("crawler4j inf 121 tester");
+		config.setMaxDownloadSize(megabyte * 10);
 
 		PageFetcher pageFetcher = new PageFetcher(config);
 	    RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
@@ -225,6 +227,7 @@ public class TheController {
 	}
 
 	public static void processData(String dir){
+		logger.info("Processing Data");
 		List<String> files = getFilesInDirectory(dir+"/CrawlerData/");
 
 		// Grabs the data from each file
@@ -273,6 +276,7 @@ public class TheController {
 		*/
 	}
 
+
 	public static void main(String[] args) throws Exception {
 		logger.info("Running The controller");
 		if (args.length < 2) {
@@ -287,7 +291,7 @@ public class TheController {
 		boolean longRun = true;
 		if(args.length > 2 && Integer.parseInt(args[2]) == 0){ longRun = false;}
 
-		String crawlStorageFolder = args[0];
+		final String crawlStorageFolder = args[0];
 		int numberOfCrawlers = Integer.parseInt(args[1]);
 
 		
@@ -298,6 +302,7 @@ public class TheController {
 
 
 		startTime = System.currentTimeMillis();
+		
 		controller.startNonBlocking(TheCrawler.class, numberOfCrawlers);
 		
 	    Runtime.getRuntime().addShutdownHook(new Thread()
@@ -305,12 +310,18 @@ public class TheController {
 	        @Override
 	        public void run()
 	        {
+	        	logger.info("Received kill signal, exiting now");
 	            controller.shutdown();
 	            controller.waitUntilFinish();
+	            System.out.println("SHUTDOWN CRAWLER");
 	        }
-	    });
+	    });  
 	    
-		//processData(crawlStorageFolder);
+	    while(!controller.isFinished()){
+	    	logger.info("Still waiting for crawl to finish before processing data");
+	    	Thread.sleep(60*1000);
+	    }
+	    processData(crawlStorageFolder);
 	}
 
 
