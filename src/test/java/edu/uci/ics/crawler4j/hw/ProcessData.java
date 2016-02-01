@@ -28,7 +28,7 @@ public class ProcessData {
 			Map<String, Integer> pageWordCount = page.getWordFreq();
             if (pageWordCount == null) continue;
 			
-            try {
+            //try {
 			for(Map.Entry<String, Integer> wordCounter : pageWordCount.entrySet()){
 				String word = wordCounter.getKey();
 				if(stopWords.contains(word)) continue;
@@ -41,7 +41,7 @@ public class ProcessData {
 				else
 					wordFreq.put(word, currentCount + count);
 			}
-            } catch (Exception e) { e.printStackTrace(); }
+            //} catch (Exception e) { e.printStackTrace(); }
 		}
 		
 		return Helper.createFrequencies(wordFreq);
@@ -94,7 +94,6 @@ public class ProcessData {
 				CrawlerData data = null;
 				while((data = (CrawlerData) ois.readObject()) != null)
 					toReturn.add(data);
-                toReturn.remove(toReturn.size()-1);
 			} catch (Exception e){
 				e.printStackTrace();
 			} finally {
@@ -133,12 +132,12 @@ public class ProcessData {
 		for(CrawlerData page : pages){
             if(page.getWordFreq() == null) continue;
 			Integer text = 0;
-		    try{	
+		    //try{	
 			for(Integer count: page.getWordFreq().values())
 				text += count;
 			
 			toReturn.put(page.getURL(), text);
-            } catch (Exception e) { e.printStackTrace(); }
+            //} catch (Exception e) { e.printStackTrace(); }
 		}
 		
 		return toReturn;

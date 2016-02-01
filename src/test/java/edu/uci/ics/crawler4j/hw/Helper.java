@@ -77,7 +77,9 @@ public class Helper {
 			String text = htmlParseData.getText();
 
 			wordFreq = Helper.wordFrequencies(text);
-		}
+		} else {
+            wordFreq = new HashMap<String, Integer>();
+        }
 		CrawlerData data = new CrawlerData(url,subdomain, wordFreq);
 
 		if(!dir.endsWith("/")) dir += "/";
@@ -118,31 +120,30 @@ public class Helper {
 	}
 
 	public static void logInfo(Page page, Logger logger){
-		int docid = page.getWebURL().getDocid();
-    String url = page.getWebURL().getURL();
-    String subDomain = page.getWebURL().getSubDomain();
+	    int docid = page.getWebURL().getDocid();
+        String url = page.getWebURL().getURL();
+        String subDomain = page.getWebURL().getSubDomain();
 
-    logger.info("Docid: {}", docid);
-    logger.info("URL: {}", url);
-    logger.info("Sub-domain: '{}'", subDomain);
+        logger.info("Docid: {}", docid);
+        logger.info("URL: {}", url);
+        logger.info("Sub-domain: '{}'", subDomain);
 
-    if (page.getParseData() instanceof HtmlParseData) {
-      HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-      String text = htmlParseData.getText();
-      String html = htmlParseData.getHtml();
+        if (page.getParseData() instanceof HtmlParseData) {
+          HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
+          String text = htmlParseData.getText();
 
-      logger.info("Text length: {}", text.length());
-      logger.info("Html length: {}", html.length());
-    }
+          logger.info("Text length: {}", text.length());
+        }
 
-    Header[] responseHeaders = page.getFetchResponseHeaders();
-    if (responseHeaders != null) {
-      logger.info("Response headers:");
-      for (Header header : responseHeaders) {
-        logger.info("\t{}: {}", header.getName(), header.getValue());
-      }
-    }
-    logger.info("Time since this start (seconds): {}", (System.currentTimeMillis() - TheController.startTime)/1000.0);
+        Header[] responseHeaders = page.getFetchResponseHeaders();
+        if (responseHeaders != null) {
+          logger.info("Response headers:");
+          for (Header header : responseHeaders) {
+              if(header.getName().equals("Date"))
+                logger.info("\t{}: {}", header.getName(), header.getValue());
+          }
+        }
+        logger.info("Time since this start (seconds): {}", (System.currentTimeMillis() - TheController.startTime)/1000.0);
 
 		logger.info("=================");
 	}
