@@ -27,6 +27,7 @@ public class ProcessData {
 		for(CrawlerData page: pages){
 			Map<String, Integer> pageWordCount = page.getWordFreq();
 			
+            try {
 			for(Map.Entry<String, Integer> wordCounter : pageWordCount.entrySet()){
 				String word = wordCounter.getKey();
 				if(stopWords.contains(word)) continue;
@@ -39,6 +40,7 @@ public class ProcessData {
 				else
 					wordFreq.put(word, currentCount + count);
 			}
+            } catch (Exception e) { e.printStackTrace(); }
 		}
 		
 		return Helper.createFrequencies(wordFreq);
@@ -129,11 +131,12 @@ public class ProcessData {
 		
 		for(CrawlerData page : pages){
 			Integer text = 0;
-			
+		    try{	
 			for(Integer count: page.getWordFreq().values())
 				text += count;
 			
 			toReturn.put(page.getURL(), text);
+            } catch (Exception e) { e.printStackTrace(); }
 		}
 		
 		return toReturn;
@@ -168,7 +171,6 @@ public class ProcessData {
 		// Each index of this list contains one URL's information:
 		// (String url, String subdomain, Map<String, Integer> wordFrequencies)
 		List<CrawlerData> pages = getDataFromFiles(files); // Use for #2
-		System.out.println("HERE");
 
 		List<Frequency> subdomainFreq = getSubdomainFreq(pages); // Use for #3 TODO sort list
 		
