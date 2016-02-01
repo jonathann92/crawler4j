@@ -26,6 +26,7 @@ public class ProcessData {
 		
 		for(CrawlerData page: pages){
 			Map<String, Integer> pageWordCount = page.getWordFreq();
+            if (pageWordCount == null) continue;
 			
             try {
 			for(Map.Entry<String, Integer> wordCounter : pageWordCount.entrySet()){
@@ -130,6 +131,7 @@ public class ProcessData {
 		Map<String, Integer> toReturn = new HashMap<String, Integer>();
 		
 		for(CrawlerData page : pages){
+            if(page.getWordFreq() == null) continue;
 			Integer text = 0;
 		    try{	
 			for(Integer count: page.getWordFreq().values())

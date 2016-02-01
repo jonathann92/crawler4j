@@ -33,9 +33,9 @@ import edu.uci.ics.crawler4j.hw.Helper;
 public class TheController {
 	private static final Logger logger = LoggerFactory.getLogger(TheController.class);
 
-	final static String jonID = "54203830";
-	final static String gessicaID = "#"; // TODO
-	final static String leoID = "#"; // TODO
+	final static String jonID = "54203830"; 
+	final static String gessicaID = "28808697"; 
+	final static String leoID = "32437030"; 
 
 	public static long startTime = 0;
 
