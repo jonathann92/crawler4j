@@ -91,6 +91,7 @@ public class ProcessData {
 				CrawlerData data = null;
 				while((data = (CrawlerData) ois.readObject()) != null)
 					toReturn.add(data);
+                toReturn.remove(toReturn.size()-1);
 			} catch (Exception e){
 				e.printStackTrace();
 			} finally {
