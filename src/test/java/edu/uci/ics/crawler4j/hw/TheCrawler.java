@@ -43,7 +43,8 @@ public class TheCrawler extends WebCrawler {
 	public boolean shouldVisit(Page refPage, WebURL url) {
 		String href = url.getURL().toLowerCase();
 		String sub = url.getSubDomain().toLowerCase();
-		return !FILTERS.matcher(href).matches() && sub.contains(".ics") && !href.contains("?");
+		int hashCode = href.replaceAll("\\s+", " ").hashCode();
+		return !FILTERS.matcher(href).matches() && sub.contains(".ics") && !href.contains("?") && TheController.contentHash.add(hashCode);
 	}
 
 	@Override

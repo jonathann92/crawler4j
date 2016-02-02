@@ -8,8 +8,10 @@ package edu.uci.ics.crawler4j.hw;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -38,6 +40,8 @@ public class TheController {
 	final static String leoID = "32437030"; 
 
 	public static long startTime = 0;
+	
+	public static Set<Integer> contentHash = new HashSet<Integer>();
 
 	public static CrawlController setup(String storageFolder,  boolean longRun) throws Exception{
 		String userAgent = "UCI Inf141-CS121 crawler " + jonID + " " + gessicaID + " " + leoID;
@@ -47,29 +51,37 @@ public class TheController {
 		int megabyte = 1048576;
 		
 		String folder = storageFolder;
-		if(!folder.endsWith("/")) folder += "/";
-		folder += "CrawlerData/";
+		if(!folder.endsWith(File.separator)) folder += File.separator;
+		folder += "CrawlerData" + File.separator;
 		
 		File theDir = new File(folder);
 
 
 		if (!theDir.exists()) {
-		    System.out.println("creating directory: " + folder);
-		    boolean result = false;
-
+		    logger.info("creating directory: " + folder);
+		    logger.info("Did not retrieve a previous hashset"); 
 		    try{
 		        theDir.mkdir();
-		        result = true;
+		        logger.info("CrawlerData DIR created");
 		    }
 		    catch(SecurityException se){
 		        se.printStackTrace();		    }
-		    if(result) {
-		        System.out.println("DIR created");
-		    }
-		}
-
+		    
+		}else if(new File(folder+"hashset").exists()){
+			ObjectInputStream ois = null;
+			try{
+				ois = new ObjectInputStream(new FileInputStream(folder+"hashset"));
+				HashSet<Integer> input = (HashSet<Integer>) ois.readObject();
+				if(input.size()> 1){
+					contentHash = input;
+					logger.info("Retreived previous hashSet");
+		            System.out.println(TheController.contentHash);
+		            System.out.println(TheController.contentHash.size());
+				} 
+			} catch (Exception e) { e.printStackTrace(); } finally { if (ois != null){ try { ois.close(); } catch (Exception e2 ) {}}}
+		} else logger.info("Did not retrieve a previous hashset"); 
 		
-
+		
 		if(longRun){
 			System.out.println("Longrun == true");
 			maxDepth = -1;
@@ -88,6 +100,7 @@ public class TheController {
 	    RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 	    RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 	    CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
+	    logger.info("The storage folder:  {}", storageFolder);
 
 		return controller;
 	}
@@ -131,9 +144,34 @@ public class TheController {
 	            controller.shutdown();
 	            controller.waitUntilFinish();
 	            System.out.println("SHUTDOWN CRAWLER");
+	            String toHashSet = "CrawlerData" + File.separator + "hashset";
+	            System.out.println(crawlStorageFolder);
+	            String dir = (crawlStorageFolder.endsWith(File.separator)) ? crawlStorageFolder + toHashSet  : crawlStorageFolder + File.separator +  toHashSet;
+
+	            System.out.println(dir);
+	            try {
+		            File f = new File(dir);
+		            if(!f.exists())
+		            	f.createNewFile();
+		            
+		            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(dir));
+		            oos.writeObject(TheController.contentHash);
+		            oos.writeObject(null);
+		            oos.close();
+		            logger.info("Saved HashSet to file");
+		            System.out.println(TheController.contentHash);
+		            System.out.println(TheController.contentHash.size());
+		            logger.info("Saved HashSet to file");
+	            } catch (Exception e ) { e.printStackTrace(); }
 	        }
 	    });  
+	    
+	    Thread.sleep(30*1000);
+	    System.exit(0);
 	}
+	
+	
+	
 
 
 }
