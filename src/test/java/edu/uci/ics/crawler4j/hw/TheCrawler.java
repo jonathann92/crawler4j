@@ -43,7 +43,6 @@ public class TheCrawler extends WebCrawler {
 	public boolean shouldVisit(Page refPage, WebURL url) {
 		String href = url.getURL().toLowerCase();
 		String sub = url.getSubDomain().toLowerCase();
-		//return HTML.matcher(href).matches() && href.contains("ics.uci.edu") ;
 		return !FILTERS.matcher(href).matches() && sub.contains(".ics") && !href.contains("?");
 	}
 
@@ -54,7 +53,6 @@ public class TheCrawler extends WebCrawler {
 
 		oos = Helper.writeDataToFile(page, oos, this.getMyId(), dir);
 		Helper.logInfo(page, this.logger);
-		
 	}
 
 	@Override
