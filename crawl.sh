@@ -8,10 +8,9 @@ if [ "$check" == "y" ] || [ "$check" == "yes" ]; then
     sleep 5
     
     mvn install
-    rm nohup.out
     rm -rf CrawlerData frontier
+    echo "START" > nohup.out
     nice -19 nohup java -classpath target/test-classes:dep.jar:target/classes/:slf4j.jar edu.uci.ics.crawler4j.hw.TheController . 12 1 &
-    sleep 2
     tail -f nohup.out
 else
     echo "You entered no"

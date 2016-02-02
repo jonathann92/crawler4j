@@ -58,7 +58,7 @@ public class TheController {
 
 
 		if (!theDir.exists()) {
-		    logger.info("creating directory: " + folder);
+		    logger.info("creating directory: {}" , folder);
 		    logger.info("Did not retrieve a previous hashset"); 
 		    try{
 		        theDir.mkdir();
@@ -93,7 +93,7 @@ public class TheController {
 		config.setMaxPagesToFetch(maxPages);
 		config.setIncludeBinaryContentInCrawling(false);
 		config.setResumableCrawling(longRun);
-		config.setUserAgentString("crawler4j inf 121 tester");
+		config.setUserAgentString(userAgent);
 		config.setMaxDownloadSize(megabyte * 10);
 
 		PageFetcher pageFetcher = new PageFetcher(config);
@@ -166,8 +166,6 @@ public class TheController {
 	        }
 	    });  
 	    
-	    Thread.sleep(30*1000);
-	    System.exit(0);
 	}
 	
 	
