@@ -44,7 +44,7 @@ public class TheController {
 	public static Set<Integer> contentHash = new HashSet<Integer>();
 
 	public static CrawlController setup(String storageFolder,  boolean longRun) throws Exception{
-		String userAgent = "UCI Inf141-CS121 crawler " + jonID + " " + gessicaID + " " + leoID;
+		String userAgent = "INF 121 test";
 		CrawlConfig config = new CrawlConfig();
 		int maxDepth = 2;
 		int maxPages = 10;
@@ -86,7 +86,9 @@ public class TheController {
 			System.out.println("Longrun == true");
 			maxDepth = -1;
 			maxPages = -1;
-		}
+			userAgent = "UCI Inf141-CS121 crawler " + jonID + " " + gessicaID + " " + leoID;
+		} 
+		
 		config.setCrawlStorageFolder(storageFolder);
 		config.setPolitenessDelay(601);
 		config.setMaxDepthOfCrawling(maxDepth);
@@ -126,7 +128,7 @@ public class TheController {
 		
 		final CrawlController controller = setup(crawlStorageFolder, longRun);
 
-		controller.addSeed("http://www.ics.uci.edu/");
+		controller.addSeed("http://www.ics.uci.edu/~jonattn2");
 		controller.addSeed("http://sli.ics.uci.edu/");
         controller.addSeed("http://archive.ics.uci.edu/");
 

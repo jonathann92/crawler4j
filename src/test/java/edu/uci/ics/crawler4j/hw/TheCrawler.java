@@ -43,14 +43,23 @@ public class TheCrawler extends WebCrawler {
 	public boolean shouldVisit(Page refPage, WebURL url) {
 		String href = url.getURL().toLowerCase();
 		String sub = url.getSubDomain().toLowerCase();
-		int hashCode = href.replaceAll("\\s+", " ").trim().hashCode();
-		return !FILTERS.matcher(href).matches() && sub.contains(".ics") && !href.contains("?") && TheController.contentHash.add(hashCode);
+		
+		return !FILTERS.matcher(href).matches() && sub.contains(".ics") && !href.contains("?");
 	}
 
 	@Override
 	public void visit(Page page){
 		String dir = this.getMyController().getConfig().getCrawlStorageFolder();
 		if(!dir.endsWith("/")) dir += "/";
+		String text = null;
+		boolean seen;
+        if (page.getParseData() instanceof HtmlParseData) {
+            HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
+            text = htmlParseData.getText();
+            
+            seen = !TheController.contentHash.add(text.replaceAll("\\s+", " ").trim().hashCode());
+          } else return;
+        if(seen) return;
 
 		oos = Helper.writeDataToFile(page, oos, this.getMyId(), dir);
 		Helper.logInfo(page, this.logger);
