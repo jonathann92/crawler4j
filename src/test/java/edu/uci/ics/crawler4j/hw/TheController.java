@@ -145,7 +145,6 @@ public class TheController {
 	        	logger.info("Received kill signal, exiting now");
 	            controller.shutdown();
 	            controller.waitUntilFinish();
-	            System.out.println("SHUTDOWN CRAWLER");
 	            String toHashSet = "CrawlerData" + File.separator + "hashset";
 	            System.out.println(crawlStorageFolder);
 	            String dir = (crawlStorageFolder.endsWith(File.separator)) ? crawlStorageFolder + toHashSet  : crawlStorageFolder + File.separator +  toHashSet;
@@ -160,11 +159,11 @@ public class TheController {
 		            oos.writeObject(TheController.contentHash);
 		            oos.writeObject(null);
 		            oos.close();
-		            logger.info("Saved HashSet to file");
 		            System.out.println(TheController.contentHash);
 		            System.out.println(TheController.contentHash.size());
 		            logger.info("Saved HashSet to file");
 	            } catch (Exception e ) { e.printStackTrace(); }
+	            System.out.println("SHUTDOWN CRAWLER");
 	        }
 	    });  
 	    
