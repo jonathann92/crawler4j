@@ -44,7 +44,7 @@ public class TheCrawler extends WebCrawler {
 		String href = url.getURL().toLowerCase();
 		String sub = url.getSubDomain().toLowerCase();
 		//return HTML.matcher(href).matches() && href.contains("ics.uci.edu") ;
-		return !FILTERS.matcher(href).matches() && sub.contains("ics") ;
+		return !FILTERS.matcher(href).matches() && sub.contains(".ics") && !href.contains("?");
 	}
 
 	@Override
@@ -62,6 +62,7 @@ public class TheCrawler extends WebCrawler {
     if(oos != null){
     	try {
     		oos.writeObject(null);
+            oos.flush();
     		oos.close();
             logger.info("Closed ObjectOutputStream for crawler-{}", this.getMyId());
     	} catch (IOException e) {

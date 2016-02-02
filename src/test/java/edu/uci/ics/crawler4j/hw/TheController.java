@@ -114,7 +114,8 @@ public class TheController {
 		final CrawlController controller = setup(crawlStorageFolder, longRun);
 
 		controller.addSeed("http://www.ics.uci.edu/");
-		//controller.addSeed("http://sli.ics.uci.edu/");
+		controller.addSeed("http://sli.ics.uci.edu/");
+        controller.addSeed("http://archive.ics.uci.edu/");
 
 
 		startTime = System.currentTimeMillis();
