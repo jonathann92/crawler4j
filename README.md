@@ -1,3 +1,10 @@
+# To Leo + Gessica
+Don't worry about TheCrawler.java and TheController.java
+All we need to work on now is ProcessData.java
+
+The crawler and the controller crawl the pages and write all the info the files
+Process Data is run after the crawling is done. We just need to answer her questions
+
 # crawler4j
 [![Build Status](https://travis-ci.org/yasserg/crawler4j.svg?branch=master)](https://travis-ci.org/yasserg/crawler4j)
 ![Maven Central](https://img.shields.io/maven-central/v/edu.uci.ics/crawler4j.svg?style=flat-square)
