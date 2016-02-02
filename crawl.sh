@@ -10,7 +10,7 @@ if [ "$check" == "y" ] || [ "$check" == "yes" ]; then
     mvn install
     rm -rf CrawlerData frontier
     echo "START" > nohup.out
-    nice -19 nohup java -classpath target/test-classes:dep.jar:target/classes/:slf4j.jar edu.uci.ics.crawler4j.hw.TheController . 12 1 &
+    nice -19 nohup java -Xmx16g -classpath target/test-classes:dep.jar:target/classes/:slf4j.jar edu.uci.ics.crawler4j.hw.TheController . 12 1 &
     tail -f nohup.out
 else
     echo "You entered no"
