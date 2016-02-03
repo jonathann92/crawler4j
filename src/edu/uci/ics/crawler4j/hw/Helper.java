@@ -16,6 +16,7 @@ import edu.uci.ics.crawler4j.hw.Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.http.Header;
+import java.sql.Timestamp;
 
 
 
@@ -67,16 +68,7 @@ public class Helper {
 		return freqs;
 	}
 
-	public static ObjectOutputStream writeDataToFile(Page page, ObjectOutputStream oos, int id, String dir){
-		String url = page.getWebURL().getURL();
-		String subdomain = page.getWebURL().getSubDomain();
-		String text = "";
-
-		if (page.getParseData() instanceof HtmlParseData) {
-			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-			text = htmlParseData.getText().replaceAll("\\s+", " ").trim();
-		}
-
+	public static ObjectOutputStream writeDataToFile(String url, String subdomain, String text, ObjectOutputStream oos, int id, String dir){
 		CrawlerData data = new CrawlerData(url,subdomain, text);
 
 		try{
@@ -107,32 +99,12 @@ public class Helper {
 		return oos;
 	}
 
-	public static void logInfo(Page page, Logger logger){
-	    int docid = page.getWebURL().getDocid();
-        String url = page.getWebURL().getURL();
-        String subDomain = page.getWebURL().getSubDomain();
-
+	public static void logInfo(int docid, String url, String subDomain, String text, Logger logger){
         logger.info("Docid: {}", docid);
         logger.info("URL: {}", url);
         logger.info("Sub-domain: '{}'", subDomain);
-
-        if (page.getParseData() instanceof HtmlParseData) {
-          HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-          String text = htmlParseData.getText();
-
-          logger.info("Text length: {}", text.length());
-        }
-
-        Header[] responseHeaders = page.getFetchResponseHeaders();
-        if (responseHeaders != null) {
-          logger.info("Response headers:");
-          for (Header header : responseHeaders) {
-              if(header.getName().equals("Date"))
-                logger.info("\t{}: {}", header.getName(), header.getValue());
-          }
-        }
-        logger.info("Time since this start (minutes): {}", (System.currentTimeMillis() - TheController.startTime)/60000.0);
-
+        logger.info("Text length: {}", text.length());
+        logger.info("\tDate: {}", new Timestamp(System.currentTimeMillis()));
 		logger.info("=================");
 	}
 

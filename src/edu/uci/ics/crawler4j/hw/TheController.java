@@ -39,7 +39,6 @@ public class TheController {
 	final static String gessicaID = "28808697"; 
 	final static String leoID = "32437030"; 
 
-	public static long startTime = 0;
 	
 	public static Set<Integer> contentHash = new HashSet<Integer>();
 
@@ -132,7 +131,7 @@ public class TheController {
         controller.addSeed("http://archive.ics.uci.edu/");
 
 
-		startTime = System.currentTimeMillis();
+		final long startTime = System.currentTimeMillis();
 		
 		controller.startNonBlocking(TheCrawler.class, numberOfCrawlers);
 		
@@ -158,6 +157,8 @@ public class TheController {
 		            oos.close();
 		            System.out.println("HashSet length: " + TheController.contentHash.size());
 		            logger.info("Saved HashSet to file");
+
+                    logger.info("Time since this start (minutes): {}", (System.currentTimeMillis() - startTime)/60000.0);
 	            } catch (Exception e ) { e.printStackTrace(); }
 	            System.out.println("SHUTDOWN CRAWLER");
 	        }

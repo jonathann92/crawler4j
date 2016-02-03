@@ -32,7 +32,7 @@ public class TheCrawler extends WebCrawler {
 
 	private static final Pattern FILTERS = Pattern.compile(
       ".*(\\.(css|js|bmp|gif|jpe?g|png|tiff?|mid|mp2|mp3|mp4|mpg|wav|avi|mov|mpeg|ram|m4v|pdf|mso|thmx|uai|odp|smil|exe" +
-      "|rm|smil|wmv|swf|wma|zip|rar|gz|pdf|ps|pptx?|xls|xlsx|zip|tgz|jar|7z|rar|tar|bz2|bw|bigwig|jemdoc|docx?))$");
+      "|rm|smil|wmv|swf|wma|zip|rar|gz|pdf|ps|pptx?|xls|xlsx|zip|tgz|jar|7z|rar|tar|bz2|bw|bigwig|jemdoc|docx?|data|arff))$");
 
 	private static final Pattern HTML = Pattern.compile(".*\\.(html|php|asp|aspx|shtml|xml)$");
 
@@ -44,25 +44,30 @@ public class TheCrawler extends WebCrawler {
 		String href = url.getURL().toLowerCase();
 		String sub = url.getSubDomain().toLowerCase();
 
-		return !FILTERS.matcher(href).matches() && sub.contains(".ics") && !href.contains("?");
+		return !FILTERS.matcher(href).matches() && href.contains("ics.uci.edu") && !href.contains("?");
 	}
 
 	@Override
 	public void visit(Page page){
+        int docid = page.getWebURL().getDocid();
+        String url = page.getWebURL().getURL();
+        String subdomain = page.getWebURL().getSubDomain();
 		String dir = this.getMyController().getConfig().getCrawlStorageFolder();
-		if(!dir.endsWith("/")) dir += "/";
-		String text = null;
+		if(!dir.endsWith(File.separator)) dir += File.separator;
+		String text = "";
 		boolean seen;
-        if (page.getParseData() instanceof HtmlParseData) {
-            HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-            text = htmlParseData.getText();
 
-            seen = !TheController.contentHash.add(text.replaceAll("\\s+", " ").trim().hashCode());
+
+        if (page.getParseData() instanceof HtmlParseData && url.contains("ics.uci.edu")) {
+            HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
+            text = htmlParseData.getText().replaceAll("\\s+", " ").trim();
+
+            seen = !TheController.contentHash.add(text.hashCode());
           } else return;
         if(seen) return;
 
-		oos = Helper.writeDataToFile(page, oos, this.getMyId(), dir);
-		Helper.logInfo(page, this.logger);
+		oos = Helper.writeDataToFile(url, subdomain, text, oos, this.getMyId(), dir);
+		Helper.logInfo(docid, url, subdomain, text, this.logger);
 	}
 
 	@Override
