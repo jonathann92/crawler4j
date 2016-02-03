@@ -31,11 +31,11 @@ public class TheCrawler extends WebCrawler {
 
 
 	private static final Pattern FILTERS = Pattern.compile(
-      ".*(\\.(css|js|bmp|gif|jpe?g|png|tiff?|mid|mp2|mp3|mp4|mpg|wav|avi|mov|mpeg|ram|m4v|pdf" +
-      "|rm|smil|wmv|swf|wma|zip|rar|gz|pdf|ppt|ps|pptx|xls|xlsx|zip|tgz|jar|7z|rar|tar|bz2|bw|bigwig))$");
+      ".*(\\.(css|js|bmp|gif|jpe?g|png|tiff?|mid|mp2|mp3|mp4|mpg|wav|avi|mov|mpeg|ram|m4v|pdf|mso|thmx|uai|odp|smil|exe" +
+      "|rm|smil|wmv|swf|wma|zip|rar|gz|pdf|ps|pptx?|xls|xlsx|zip|tgz|jar|7z|rar|tar|bz2|bw|bigwig|jemdoc|docx?))$");
 
 	private static final Pattern HTML = Pattern.compile(".*\\.(html|php|asp|aspx|shtml|xml)$");
-	
+
 
 
 
@@ -43,7 +43,7 @@ public class TheCrawler extends WebCrawler {
 	public boolean shouldVisit(Page refPage, WebURL url) {
 		String href = url.getURL().toLowerCase();
 		String sub = url.getSubDomain().toLowerCase();
-		
+
 		return !FILTERS.matcher(href).matches() && sub.contains(".ics") && !href.contains("?");
 	}
 
@@ -56,11 +56,11 @@ public class TheCrawler extends WebCrawler {
         if (page.getParseData() instanceof HtmlParseData) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
             text = htmlParseData.getText();
-            
+
             seen = !TheController.contentHash.add(text.replaceAll("\\s+", " ").trim().hashCode());
           } else return;
         if(seen) return;
-         
+
 		oos = Helper.writeDataToFile(page, oos, this.getMyId(), dir);
 		Helper.logInfo(page, this.logger);
 	}
