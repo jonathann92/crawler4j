@@ -75,8 +75,7 @@ public class TheController {
 				if(input.size()> 1){
 					contentHash = input;
 					logger.info("Retreived previous hashSet");
-		            System.out.println(TheController.contentHash);
-		            System.out.println(TheController.contentHash.size());
+		            System.out.println("HashSet length: " + TheController.contentHash.size());
 				} 
 			} catch (Exception e) { e.printStackTrace(); } finally { if (ois != null){ try { ois.close(); } catch (Exception e2 ) {}}}
 		} else logger.info("Did not retrieve a previous hashset"); 
@@ -146,10 +145,8 @@ public class TheController {
 	            controller.shutdown();
 	            controller.waitUntilFinish();
 	            String toHashSet = "CrawlerData" + File.separator + "hashset";
-	            System.out.println(crawlStorageFolder);
 	            String dir = (crawlStorageFolder.endsWith(File.separator)) ? crawlStorageFolder + toHashSet  : crawlStorageFolder + File.separator +  toHashSet;
 
-	            System.out.println(dir);
 	            try {
 		            File f = new File(dir);
 		            if(!f.exists())
@@ -159,8 +156,7 @@ public class TheController {
 		            oos.writeObject(TheController.contentHash);
 		            oos.writeObject(null);
 		            oos.close();
-		            System.out.println(TheController.contentHash);
-		            System.out.println(TheController.contentHash.size());
+		            System.out.println("HashSet length: " + TheController.contentHash.size());
 		            logger.info("Saved HashSet to file");
 	            } catch (Exception e ) { e.printStackTrace(); }
 	            System.out.println("SHUTDOWN CRAWLER");
