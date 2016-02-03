@@ -14,40 +14,32 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/*
+1. How much time did it take to crawl the entire domain?
+
+2. How many unique pages did you find in the entire domain?
+(Uniqueness is established by the URL, not the page's content.)
+
+3. How many subdomains did you find? Submit the list of subdomains ordered
+alphabetically and the number of unique pages detected in each subdomain.
+The file should be called Subdomains.txt, and its content should be lines
+containing the URL, a comma, a space, and the number.
+
+4. What is the longest page in terms of number of words?
+(Don't count HTML markup as words.)
+
+5. What are the 500 most common words in this domain?
+(Ignore English stop words, which can be found, for example,
+at http://www.ranks.nl/stopwords.) Submit the list of common
+words ordered by frequency (and alphabetically for words with
+the same frequency) in a file called CommonWords.txt.
+*/
+
 public class ProcessData {
 	private static final Logger logger = LoggerFactory.getLogger(ProcessData.class);
 
-	
-	public static List<Frequency> getTotalWordFreq(List<CrawlerData> pages, Set<String> stopWords){
-		// This functions adds up all the counters for each every word.
-		// wordFreq is a Map of words as the KEY
-		// and Count as the VALUE
-		Map<String, Integer> wordFreq = new HashMap<String, Integer>();
-		
-		for(CrawlerData page: pages){
-			Map<String, Integer> pageWordCount = page.getWordFreq();
-            if (pageWordCount == null) continue;
-			
-            //try {
-			for(Map.Entry<String, Integer> wordCounter : pageWordCount.entrySet()){
-				String word = wordCounter.getKey();
-				if(stopWords.contains(word)) continue;
-				
-				Integer count = wordCounter.getValue();
-				
-				Integer currentCount = wordFreq.get(word);
-				if(currentCount == null)
-					wordFreq.put(word,count);
-				else
-					wordFreq.put(word, currentCount + count);
-			}
-            //} catch (Exception e) { e.printStackTrace(); }
-		}
-		
-		return Helper.createFrequencies(wordFreq);
-	}
-	
-	public static Set<String> stopWords(){
+	public static Set<String> setStopWords(){
 		String words = "a about above after again against all am an "
 				+ "and any are aren't as at be because been before being "
 				+ "below between both but by can't cannot could couldn't did didn't "
@@ -62,11 +54,10 @@ public class ProcessData {
 				+ "very was wasn't we we'd we'll we're we've were weren't what what's when when's "
 				+ "where where's which while who who's whom why why's with won't would wouldn't you "
 				+ "you'd you'll you're you've your yours yourself yourselves";
-		
-		
+
 		return new HashSet<String>(Arrays.asList(words.split("\\s+")));
 	}
-	
+
 	public static List<String> getFilesInDirectory(String dir){
 		List<String> toReturn = new ArrayList<String>();
 
@@ -83,7 +74,7 @@ public class ProcessData {
 
 		return toReturn;
 	}
-	
+
 	public static List<CrawlerData> getDataFromFiles(List<String> files){
 		List<CrawlerData> toReturn = new ArrayList<CrawlerData>();
 
@@ -106,14 +97,13 @@ public class ProcessData {
 
 		return toReturn;
 	}
-	
+
 	public static List<Frequency> getSubdomainFreq(List<CrawlerData> pages){
-		if(pages == null) return null;
 		List<String> subdomains = getSubdomains(pages);
-		Map<String, Integer> subdomainCounter = Helper.subdomainFreq(subdomains);
+		Map<String, Integer> subdomainCounter = Helper.createMapFreq(subdomains);
 		return Helper.createFrequencies(subdomainCounter);
 	}
-	
+
 	public static List<String> getSubdomains(List<CrawlerData> pages){
 		List<String> subdomains = new ArrayList<String>();
 
@@ -123,94 +113,30 @@ public class ProcessData {
 
 		return subdomains;
 	}
-	
-	
-	public static Map<String, Integer> getUrlSize(List<CrawlerData> pages){
-		if(pages == null) return null;
-		Map<String, Integer> toReturn = new HashMap<String, Integer>();
-		
-		for(CrawlerData page : pages){
-            if(page.getWordFreq() == null) continue;
-			Integer text = 0;
-		    //try{	
-			for(Integer count: page.getWordFreq().values())
-				text += count;
-			
-			toReturn.put(page.getURL(), text);
-            //} catch (Exception e) { e.printStackTrace(); }
-		}
-		
-		return toReturn;
-	}
-	
-	public static String findLongestPage(Map<String, Integer> urlSize){
-		String longestPage = null;
-		long num = 0;
-		for(Map.Entry<String, Integer> wordCounter : urlSize.entrySet()){
-			String url = wordCounter.getKey();
-			Integer count = wordCounter.getValue();
-			if(count > num){
-				longestPage = url;
-				num = count;
-			}
-		}
-		
-		return longestPage;
-	}
 
 	public static void main(String[] args) {
+		// SETUP
 		if(args.length != 1) {
 			System.out.println("Need 1 argument");
 			return;
 		}
-		String dir = args[0];
-		
+		Set<String> stopWords = setStopWords();
+		String dir = args[0].endsWith(File.separator) ? args[0] : (args[0]+=File.separator);
+		// END SETUP
+
 		logger.info("Processing Data");
-		List<String> files = getFilesInDirectory(dir+"/CrawlerData/");
+		List<String> files = getFilesInDirectory(dir+"CrawlerData"+File.separator);
 
 		// Grabs the data from each file
 		// Each index of this list contains one URL's information:
-		// (String url, String subdomain, Map<String, Integer> wordFrequencies)
+		// (String url, String subdomain, String text)
 		List<CrawlerData> pages = getDataFromFiles(files); // Use for #2
 
 		List<Frequency> subdomainFreq = getSubdomainFreq(pages); // Use for #3 TODO sort list
-		
-		//Map<String, Integer> urlSize = getUrlSize(pages); // Use for #4
-		//String longestPage = findLongestPage(urlSize); // Use for #4
-		// These 3 lines are equivalent
-		String longestPage = findLongestPage(getUrlSize(pages)); // Use for #4
-		
-		List<Frequency> totalWordFreq = getTotalWordFreq(pages, stopWords()); // Use for #5 TODO SORT list
-		
-		// Answer for #2
-		System.out.println("Total num pages: " + pages.size()); 
 
-		// Answer for #3 TODO Sort the List and write to file
-		for(int i = 0; i < subdomainFreq.size(); ++i){
-			Frequency subdomain = subdomainFreq.get(i);
-			System.out.println(subdomain.getText() + ", " + subdomain.getFrequency());
-		}
-		
-		// Answer for #4
-		System.out.println("longest page is: " + longestPage); 
-
-
-
-		/*
-		 * TODO
-		 * SORT subdomainFreq
-		 * SORT totalWordFreq
-		 *
-		 * DO #3  
-		 * DO #5 
-		 */
-
-		
-		/*
-		for(int i = 0; i < pages.size(); ++i){
-			System.out.println(pages.get(i).getURL());
-		}
-		*/
+		for(int i = 0; i < pages.size(); ++i)
+			System.out.println(pages.get(i));
+		System.out.println("Number of unique URLS: " + pages.size()); // Answer for #2
 
 	}
 

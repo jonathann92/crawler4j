@@ -13,21 +13,14 @@ import java.io.Serializable;
 public class CrawlerData implements Serializable {
 	String subdomain = null;
 	String url = null;
-	Map<String, Integer> wordFreq = new HashMap<String, Integer>();
-
+	String text = null;
 
 	public CrawlerData(){}
 
-		public CrawlerData(String url, String subdomain, Map<String, Integer> wordFreq){
+		public CrawlerData(String url, String subdomain, String text){
 			this.subdomain = subdomain;
 			this.url = url;
-			this.wordFreq = wordFreq;
-		}
-
-		public void setData(String url, String subdomain, Map<String, Integer> wordFreq){
-			this.subdomain = subdomain;
-			this.url = url;
-			this.wordFreq = wordFreq;
+			this.text = text;
 		}
 
 		public String getURL(){
@@ -38,7 +31,12 @@ public class CrawlerData implements Serializable {
 			return this.subdomain;
 		}
 
-		public Map<String, Integer> getWordFreq(){
-			return wordFreq;
+		public String getText(){
+			return this.text;
+		}
+
+		@Override
+		public String toString(){
+			return "URL: " + this.url + "\nSubdomain: " + this.subdomain + "\nText length: " + this.text.length();
 		}
 }

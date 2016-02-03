@@ -39,7 +39,7 @@ public class Helper {
     return freq;
 	}
 
-	public static Map<String, Integer> subdomainFreq(List<String> subdomains) {
+	public static Map<String, Integer> createMapFreq(List<String> subdomains) {
 		Map<String, Integer> freq = new HashMap<String, Integer>();
 
 		for(int i = 0; i < subdomains.size(); ++i){
@@ -70,27 +70,19 @@ public class Helper {
 	public static ObjectOutputStream writeDataToFile(Page page, ObjectOutputStream oos, int id, String dir){
 		String url = page.getWebURL().getURL();
 		String subdomain = page.getWebURL().getSubDomain();
-		Map<String, Integer> wordFreq = null;
+		String text = "";
 
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-			String text = htmlParseData.getText();
+			text = htmlParseData.getText().replaceAll("\\s+", " ").trim();
+		}
 
-			wordFreq = Helper.wordFrequencies(text);
-		} else {
-            wordFreq = new HashMap<String, Integer>();
-        }
-		CrawlerData data = new CrawlerData(url,subdomain, wordFreq);
-
-		if(!dir.endsWith("/")) dir += "/";
-
-
-		String pathToFile = dir + "CrawlerData/crawler-" + (char) (id+64);
-
-
+		CrawlerData data = new CrawlerData(url,subdomain, text);
 
 		try{
 	    	if(oos == null){
+					if(!dir.endsWith(File.separator)) dir += File.separator;
+					String pathToFile = dir + "CrawlerData/crawler-" + (char) (id+64);
 					boolean fileExists = true;
 					while(fileExists){
 						File file = new File (pathToFile+".cwl");
@@ -99,10 +91,6 @@ public class Helper {
 						} else fileExists = false;
 					}
 
-	    		File file = new File(pathToFile+".cwl");
-	    			if(file.exists()){
-	    				pathToFile += id;
-	    		}
 	    		pathToFile += ".cwl";
 	    		oos = new ObjectOutputStream(new FileOutputStream(pathToFile));
 	    	}
@@ -143,7 +131,7 @@ public class Helper {
                 logger.info("\t{}: {}", header.getName(), header.getValue());
           }
         }
-        logger.info("Time since this start (seconds): {}", (System.currentTimeMillis() - TheController.startTime)/1000.0);
+        logger.info("Time since this start (minutes): {}", (System.currentTimeMillis() - TheController.startTime)/60000.0);
 
 		logger.info("=================");
 	}
