@@ -30,6 +30,7 @@ public class TheCrawler extends WebCrawler {
 
 
 
+
 	private static final Pattern FILTERS = Pattern.compile(
       ".*(\\.(css|js|bmp|gif|jpe?g|png|tiff?|mid|mp2|mp3|mp4|mpg|wav|avi|mov|mpeg|ram|m4v|pdf|mso|thmx|uai|odp|smil|exe" +
       "|rm|smil|wmv|swf|wma|zip|rar|gz|pdf|ps|pptx?|xls|xlsx|zip|tgz|jar|7z|rar|tar|bz2|bw|bigwig|jemdoc|docx?|data|arff))$");
@@ -43,8 +44,23 @@ public class TheCrawler extends WebCrawler {
 	public boolean shouldVisit(Page refPage, WebURL url) {
 		String href = url.getURL().toLowerCase();
 		String sub = url.getSubDomain().toLowerCase();
+        String dir = this.getMyController().getConfig().getCrawlStorageFolder();
+		if(!dir.endsWith(File.separator)) dir += File.separator;
 
-		return !FILTERS.matcher(href).matches() && href.contains("ics.uci.edu") && !href.contains("?");
+
+		if( !FILTERS.matcher(href).matches() && href.contains(".ics.uci.edu") && !href.contains("?") && href.length() < 1000 && href.contains("http")){
+            try{
+                BufferedWriter bw = new BufferedWriter(new FileWriter(dir+"CrawlerData/"+this.getMyId()+".urls", true));
+                bw.write(href);
+                bw.newLine();
+                bw.flush();
+                bw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+             }
+
+            return true;
+        } else return false;
 	}
 
 	@Override
@@ -54,15 +70,16 @@ public class TheCrawler extends WebCrawler {
         String subdomain = page.getWebURL().getSubDomain();
 		String dir = this.getMyController().getConfig().getCrawlStorageFolder();
 		if(!dir.endsWith(File.separator)) dir += File.separator;
+
 		String text = "";
 		boolean seen;
 
-
-        if (page.getParseData() instanceof HtmlParseData && url.contains("ics.uci.edu")) {
+        if (page.getParseData() instanceof HtmlParseData) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
             text = htmlParseData.getText().replaceAll("\\s+", " ").trim();
-
+            synchronized(TheController.mutex){
             seen = !TheController.contentHash.add(text.hashCode());
+            }
           } else return;
         if(seen) return;
 

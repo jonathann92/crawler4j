@@ -65,6 +65,7 @@ public class ProcessData {
 
 		File folder = new File(dir);
 
+        System.out.println(folder.getAbsolutePath());
 		for(File file: folder.listFiles()){
 			String path = file.getAbsolutePath();
 
@@ -79,14 +80,27 @@ public class ProcessData {
 
 	public static List<CrawlerData> getDataFromFiles(List<String> files){
 		List<CrawlerData> toReturn = new ArrayList<CrawlerData>();
+        Set<String> urls = new HashSet<String>();
+
+        ObjectOutputStream oos = null;
+        try{
+            oos = new ObjectOutputStream(new FileOutputStream("./Combined.cwl"));
+        } catch (Exception e) { e.printStackTrace(); }
+
+
 
 		for(int i = 0; i < files.size(); ++i){
-			ObjectInputStream ois = null;
+        	ObjectInputStream ois = null;
 			try{
 				ois = new ObjectInputStream(new FileInputStream(files.get(i)));
 				CrawlerData data = null;
-				while((data = (CrawlerData) ois.readObject()) != null)
-					toReturn.add(data);
+				while((data = (CrawlerData) ois.readObject()) != null){
+                    if(urls.add(data.getURL())){
+                        oos.writeObject(data);
+                        oos.flush();
+					    toReturn.add(data);
+                    }
+                }
 			} catch (Exception e){
 				e.printStackTrace();
 			} finally {
@@ -96,6 +110,11 @@ public class ProcessData {
 				catch (IOException e2 ) { }
 			}
 		}
+
+        try{ if (oos != null){
+            oos.writeObject(null);
+            oos.flush(); 
+            oos.close(); }} catch (Exception e3) { e3.printStackTrace();}
 
 		return toReturn;
 	}
@@ -139,6 +158,12 @@ public class ProcessData {
 		for(int i = 0; i < pages.size(); ++i)
 			System.out.println(pages.get(i));
 		System.out.println("Number of unique URLS: " + pages.size()); // Answer for #2
+        System.out.println(pages.get(0).getURL());
+        String text = pages.get(0).getText();
+        List<String> x = Arrays.asList(text.split("[^A-Za-z0-9'`]"));
+        System.out.println(x.get(0));
+        System.out.println(x.get(0).length());
+
 
 	}
 
