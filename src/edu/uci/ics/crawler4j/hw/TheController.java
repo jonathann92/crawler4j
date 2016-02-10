@@ -2,8 +2,8 @@ package edu.uci.ics.crawler4j.hw;
 
 /*
  * Authors: Jonathan Nguyen 54203830
- * 			Gessica Torres TODO
- * 			Leonard Bejosano TODO
+ * 			Gessica Torres 28808697
+ * 			Leonard Bejosano 32437030
  */
 
 import java.io.File;
@@ -41,6 +41,7 @@ public class TheController {
 
 	
 	public static Set<Integer> contentHash = new HashSet<Integer>();
+    public final static Object mutex = new Object();
 
 	public static CrawlController setup(String storageFolder,  boolean longRun) throws Exception{
 		String userAgent = "INF 121 test";
@@ -88,7 +89,7 @@ public class TheController {
 		} 
 		
 		config.setCrawlStorageFolder(storageFolder);
-		config.setPolitenessDelay(601);
+		config.setPolitenessDelay(1200);
 		config.setMaxDepthOfCrawling(maxDepth);
 		config.setMaxPagesToFetch(maxPages);
 		config.setIncludeBinaryContentInCrawling(false);

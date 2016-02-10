@@ -2,8 +2,8 @@ package edu.uci.ics.crawler4j.hw;
 
 /*
  * Authors: Jonathan Nguyen 54203830
- * 			Gessica Torres TODO
- * 			Leonard Bejosano TODO
+ * 			Gessica Torres 28808697
+ * 			Leonard Bejosano 32437030
  */
 
 import java.util.*;
@@ -24,11 +24,13 @@ public class Helper {
 
 	public static Map<String, Integer> wordFrequencies(String text) {
     Map<String, Integer> freq = new HashMap<String, Integer>();
+    System.out.println("splitting items");
 
     String[] items = text.split("[^a-zA-Z0-9'`]+");
     List<String> words = Arrays.asList(items);
 
     for(int i = 0; i < words.size(); ++i){
+    	System.out.println(i);
 
 		Integer count = freq.get(words.get(i));
 		if(count == null)

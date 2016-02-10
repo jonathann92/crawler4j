@@ -2,8 +2,8 @@ package edu.uci.ics.crawler4j.hw;
 
 /*
  * Authors: Jonathan Nguyen 54203830
- * 			Gessica Torres TODO
- * 			Leonard Bejosano TODO
+ * 			Gessica Torres 28808697
+ * 			Leonard Bejosano 32437030
  */
 
 import java.util.*;

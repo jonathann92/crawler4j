@@ -1,5 +1,11 @@
 package edu.uci.ics.crawler4j.hw;
 
+/*
+ * Authors: Jonathan Nguyen 54203830
+ * 			Gessica Torres 28808697
+ * 			Leonard Bejosano 32437030
+ */
+
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -15,16 +21,12 @@ import edu.uci.ics.crawler4j.url.WebURL;
 import edu.uci.ics.crawler4j.hw.CrawlerData;
 import edu.uci.ics.crawler4j.hw.Helper;
 
-/*
- * Authors: Jonathan Nguyen 54203830
- * 			Gessica Torres TODO
- * 			Leonard Bejosano TODO
- */
 
 public class TheCrawler extends WebCrawler {
 	FileOutputStream fout = null;
 	ObjectOutputStream oos = null;
 	File file = null;
+
 
 
 
@@ -43,8 +45,23 @@ public class TheCrawler extends WebCrawler {
 	public boolean shouldVisit(Page refPage, WebURL url) {
 		String href = url.getURL().toLowerCase();
 		String sub = url.getSubDomain().toLowerCase();
+        String dir = this.getMyController().getConfig().getCrawlStorageFolder();
+		if(!dir.endsWith(File.separator)) dir += File.separator;
 
-		return !FILTERS.matcher(href).matches() && href.contains("ics.uci.edu") && !href.contains("?");
+
+		if( !FILTERS.matcher(href).matches() && href.contains(".ics.uci.edu") && !href.contains("?") && href.length() < 1000 && href.contains("http")){
+            try{
+                BufferedWriter bw = new BufferedWriter(new FileWriter(dir+"CrawlerData/"+this.getMyId()+".urls", true));
+                bw.write(href);
+                bw.newLine();
+                bw.flush();
+                bw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+             }
+
+            return true;
+        } else return false;
 	}
 
 	@Override
@@ -54,15 +71,16 @@ public class TheCrawler extends WebCrawler {
         String subdomain = page.getWebURL().getSubDomain();
 		String dir = this.getMyController().getConfig().getCrawlStorageFolder();
 		if(!dir.endsWith(File.separator)) dir += File.separator;
+
 		String text = "";
 		boolean seen;
 
-
-        if (page.getParseData() instanceof HtmlParseData && url.contains("ics.uci.edu")) {
+        if (page.getParseData() instanceof HtmlParseData) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
             text = htmlParseData.getText().replaceAll("\\s+", " ").trim();
-
+            synchronized(TheController.mutex){
             seen = !TheController.contentHash.add(text.hashCode());
+            }
           } else return;
         if(seen) return;
 

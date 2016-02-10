@@ -1,3 +1,9 @@
+/*
+ * Borrowed by: Jonathan Nguyen 54203830
+ * 				Gessica Torres 28808697
+ * 				Leonard Bejosano 32437030
+ */
+
 package edu.uci.ics.crawler4j.hw;
 
 public final class Frequency {
