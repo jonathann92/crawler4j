@@ -85,11 +85,11 @@ public class TheController {
 			System.out.println("Longrun == true");
 			maxDepth = -1;
 			maxPages = -1;
-			userAgent = "UCI Inf141-CS121 crawler " + jonID + " " + gessicaID + " " + leoID;
+			userAgent = "UCI Inf141-CS121 crawler "; //+ jonID + " " + gessicaID + " " + leoID;
 		} 
 		
 		config.setCrawlStorageFolder(storageFolder);
-		config.setPolitenessDelay(1200);
+		config.setPolitenessDelay(600);
 		config.setMaxDepthOfCrawling(maxDepth);
 		config.setMaxPagesToFetch(maxPages);
 		config.setIncludeBinaryContentInCrawling(false);

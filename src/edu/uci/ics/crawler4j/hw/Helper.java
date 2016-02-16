@@ -68,10 +68,11 @@ public class Helper {
 	    }
 
 		return freqs;
-	}
-
-	public static ObjectOutputStream writeDataToFile(String url, String subdomain, String text, ObjectOutputStream oos, int id, String dir){
-		CrawlerData data = new CrawlerData(url,subdomain, text);
+	
+    }
+    
+	public static ObjectOutputStream writeDataToFile(String url, String subdomain, String text, String title, ObjectOutputStream oos, int id, String dir){
+		CrawlerData data = new CrawlerData(url,subdomain, text, title);
 
 		try{
 	    	if(oos == null){

@@ -73,18 +73,20 @@ public class TheCrawler extends WebCrawler {
 		if(!dir.endsWith(File.separator)) dir += File.separator;
 
 		String text = "";
+        String title = "";
 		boolean seen;
 
         if (page.getParseData() instanceof HtmlParseData) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
             text = htmlParseData.getText().replaceAll("\\s+", " ").trim();
+            title = htmlParseData.getTitle();
             synchronized(TheController.mutex){
             seen = !TheController.contentHash.add(text.hashCode());
             }
           } else return;
         if(seen) return;
 
-		oos = Helper.writeDataToFile(url, subdomain, text, oos, this.getMyId(), dir);
+		oos = Helper.writeDataToFile(url, subdomain, text, title, oos, this.getMyId(), dir);
 		Helper.logInfo(docid, url, subdomain, text, this.logger);
 	}
 

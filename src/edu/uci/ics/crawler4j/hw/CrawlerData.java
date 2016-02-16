@@ -14,13 +14,15 @@ public class CrawlerData implements Serializable {
 	String subdomain = null;
 	String url = null;
 	String text = null;
+    String title = null;
 
 	public CrawlerData(){}
 
-		public CrawlerData(String url, String subdomain, String text){
+		public CrawlerData(String url, String subdomain, String text, String title){ 
 			this.subdomain = subdomain;
 			this.url = url;
 			this.text = text;
+            this.title = title;
 		}
 
 		public String getURL(){
@@ -34,6 +36,10 @@ public class CrawlerData implements Serializable {
 		public String getText(){
 			return this.text;
 		}
+
+        public String getTitle(){
+            return this.title;
+        }
 
 		@Override
 		public String toString(){
